@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔗 Direct Links — Premium Dashboard</title>
+<link rel="stylesheet" href="links.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h1>🔗 Direct Links</h1>
+  <div class="nav-right">
+      <div class="bell" id="bell">&#128276;</div>
+      <div class="hamburger" id="hamburger">&#9776;</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="links.html">🔗 Links</a>
+    <a href="withdrawal.html">💵 Withdrawal</a>
+    <a href="support.html">📩 Support</a>
+    <a href="announcements.html">📢 Announcements</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+  <button class="create-btn" id="createBtn">+ Create Direct Link</button>
+
+  <!-- Category Menu -->
+  <div id="categoryMenu">
+    <h3>Select Link Type</h3>
+    <button data-type="movie">🎬 Movie</button>
+    <button data-type="adult">🔞 Adult</button>
+    <button data-type="all">🎲 Random/All</button>
+  </div>
+  
+  <!-- Links Grid -->
+  <div class="links-grid" id="linksGrid"></div>
+</div>
+
+<!-- Notifications Panel -->
+<div id="notificationsPanel">
+  <h2>
+    Notifications
+    <button class="back-btn" id="backBtn">← Back</button>
+  </h2>
+  <div id="notificationsList"></div>
+</div>
+
+<script type="module" src="links.js"></script>
+</body>
+</html>

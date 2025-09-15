@@ -1,0 +1,147 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1a1a1a;
+    padding: 1rem 2rem;
+    color: #fff;
+}
+
+.navbar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.navbar .nav-links li {
+    display: inline;
+    margin-left: 1.5rem;
+}
+
+.navbar .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.navbar .nav-links a:hover {
+    color: #00aaff;
+}
+
+/* Container */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70vh;
+    background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+}
+
+/* Form container */
+.form-container {
+    background: #fff;
+    padding: 3rem 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 350px;
+    text-align: center;
+}
+
+/* Button group */
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.button-group button {
+    padding: 0.7rem 2rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 50px;
+    background: #e0e0e0;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.button-group button.active {
+    background: #00aaff;
+    color: #fff;
+}
+
+.button-group button:hover:not(.active) {
+    background: #cfcfcf;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form input {
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+form button {
+    padding: 0.8rem;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 50px;
+    background: #00aaff;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+form button:hover {
+    background: #0088cc;
+}
+
+/* Footer */
+footer {
+    background: #1a1a1a;
+    color: #fff;
+    text-align: center;
+    padding: 1.5rem 2rem;
+}
+
+footer ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+}
+
+footer ul li {
+    margin: 0 1rem;
+}
+
+footer ul li a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+footer ul li a:hover {
+    color: #00aaff;
+}
+
+footer p {
+    font-size: 0.9rem;
+    opacity: 0.7;
+}

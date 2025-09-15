@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📩 Support — Premium Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0; padding:0; }
+
+/* ===== Navbar ===== */
+.navbar {
+    background:linear-gradient(90deg,#c9c9c9,#e6e6e6);
+    padding:12px 20px;
+    display:flex; justify-content:space-between; align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    position:sticky; top:0; z-index:100;
+}
+.navbar h1 { margin:0; font-size:1.5rem; font-weight:700; color:#333; letter-spacing:1px; }
+.navbar .nav-right { display:flex; align-items:center; gap:20px; }
+.navbar .bell { font-size:1.5rem; cursor:pointer; position:relative; color:#444; }
+.navbar .bell::after {
+    content:''; width:8px; height:8px; background:red; border-radius:50%;
+    position:absolute; top:2px; right:2px;
+}
+.navbar .hamburger { font-size:1.8rem; cursor:pointer; color:#333; display:block; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    position:fixed; top:0; left:-100%; width:260px; height:100%;
+    background:linear-gradient(180deg,#dcdcdc,#f5f5f5);
+    padding:25px 20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;
+    box-shadow:2px 0 8px rgba(0,0,0,0.2); transition:0.3s;
+    z-index:300;
+}
+.sidebar a {
+    text-decoration:none; color:#222; font-weight:500; padding:12px 14px;
+    border-radius:8px; transition:0.3s;
+}
+.sidebar a:hover { background:#999; color:#fff; }
+.sidebar.show { left:0; }
+
+/* ===== Overlay ===== */
+.overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.45);
+    z-index:200; display:none;
+}
+.overlay.active { display:block; }
+
+/* ===== Main Content ===== */
+.main-content { padding:20px; max-width:1000px; margin:auto; }
+.main-content h2 { margin-top:0; font-size:1.6rem; color:#333; }
+.main-content p { font-size:1rem; color:#555; margin-bottom:15px; }
+
+/* ===== Support Form ===== */
+.support-form {
+    background:linear-gradient(135deg,#e8e8e8,#cfcfcf);
+    padding:25px; border-radius:12px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    margin-bottom:30px;
+}
+.support-form h2 { margin:0 0 15px 0; color:#333; font-size:1.4rem; }
+.support-form label { display:block; margin:10px 0 5px; font-weight:500; }
+.support-form input, .support-form textarea {
+    width:100%; padding:12px; border:1px solid #bbb; border-radius:8px;
+    font-size:1rem; margin-bottom:12px;
+}
+.support-form textarea { resize:vertical; min-height:120px; }
+.support-form button {
+    background:#999; color:#fff; border:none; padding:12px 20px;
+    border-radius:8px; font-weight:600; cursor:pointer; transition:0.3s;
+}
+.support-form button:hover { background:#777; }
+
+/* ===== Tickets List ===== */
+.tickets-list {
+    display:flex; flex-direction:column; gap:12px; margin-bottom:30px;
+}
+.ticket-item {
+    background:#fff; padding:15px; border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.1);
+    display:flex; justify-content:space-between; align-items:center;
+    cursor:pointer; transition:0.3s;
+}
+.ticket-item:hover { background:#eee; }
+.ticket-status {
+    padding:5px 10px; border-radius:6px; font-size:0.9rem; font-weight:600;
+}
+.status-sent { background:#ffe6e6; color:#a30000; }    /* just sent */
+.status-answered { background:#e6ffe6; color:#006600; } /* answered */
+.status-seen { background:#cce5ff; color:#004085; }     /* seen */
+
+/* ===== Modal ===== */
+.modal {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center;
+    z-index:400;
+}
+.modal-content {
+    background:#fff; padding:20px; border-radius:10px; max-width:500px; width:90%;
+}
+.modal-content h3 { margin-top:0; }
+.modal-close { float:right; cursor:pointer; font-size:1.4rem; }
+.modal-answer {
+    background:#f5f5f5; padding:10px; border-radius:8px; margin-top:10px; color:#333;
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h1>📩 Support</h1>
+  <div class="nav-right">
+      <div class="bell" onclick="toggleNotifications()" title="Notifications">&#128276;</div>
+      <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="links.html">🔗 Links</a>
+    <a href="withdrawal.html">💵 Withdrawal</a>
+    <a href="support.html">📩 Support</a>
+    <a href="announcements.html">📢 Announcements</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="logout.html" style="color:#b30000;">🚪 Logout</a>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+  <!-- Support Form -->
+  <div class="support-form">
+    <h2>Contact Support</h2>
+    <form id="supportForm">
+      <label for="subject">Subject</label>
+      <input type="text" id="subject" required>
+      
+      <label for="message">Message</label>
+      <textarea id="message" required></textarea>
+      
+      <button type="submit">📨 Send Ticket</button>
+    </form>
+  </div>
+
+  <!-- Tickets List -->
+  <h2>My Tickets</h2>
+  <div class="tickets-list" id="ticketsList"></div>
+
+</div>
+
+<!-- Ticket Modal -->
+<div class="modal" id="ticketModal">
+  <div class="modal-content">
+    <span class="modal-close" onclick="closeModal()">&times;</span>
+    <h3 id="modalSubject"></h3>
+    <p id="modalMessage"></p>
+    <p><b>Date:</b> <span id="modalDate"></span></p>
+    <p><b>Status:</b> <span id="modalStatus"></span></p>
+    <div id="modalAnswer" class="modal-answer"></div>
+  </div>
+</div>
+
+<!-- Firebase Modular SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { firebaseConfig } from "./config.js";
+
+// Init
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// Encode email
+function encodeEmail(email){ return email.replace(/\./g,"_"); }
+
+let encodedEmail = null;
+
+// ===== Sidebar toggle =====
+window.toggleSidebar = function(){
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('overlay').classList.toggle('active');
+}
+window.closeSidebar = function(){
+  document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('overlay').classList.remove('active');
+}
+
+// Notifications placeholder
+window.toggleNotifications = function(){ alert("🔔 Notifications panel coming soon!"); }
+
+// ===== Support Ticket Submit =====
+document.getElementById("supportForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  if(!subject || !message){ alert("⚠️ Fill all fields!"); return; }
+
+  const ticketId = "ticket_"+Date.now();
+  const ticketData = {
+      subject,
+      message,
+      status:"sent",   // default
+      seen:false,
+      date:new Date().toLocaleString(),
+      answer:""
+  };
+
+  await set(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), ticketData);
+  alert("✅ Ticket submitted successfully!");
+  document.getElementById('subject').value="";
+  document.getElementById('message').value="";
+});
+
+// ===== Load Tickets =====
+function loadTickets(){
+  const ticketsRef = ref(db, `child_panel/${encodedEmail}/support`);
+  onValue(ticketsRef, snap=>{
+      const data = snap.val() || {};
+      const list = document.getElementById("ticketsList");
+      list.innerHTML="";
+      Object.entries(data).reverse().forEach(([id,val])=>{
+          const div = document.createElement("div");
+          div.className="ticket-item";
+
+          // Color logic
+          let statusClass="status-sent";
+          if(val.answer && val.answer.trim()!==""){
+              statusClass="status-answered";
+              if(val.seen) statusClass="status-seen";
+          }
+
+          div.innerHTML=`
+            <span><b>${val.subject}</b> <br><small>${val.date}</small></span>
+            <span class="ticket-status ${statusClass}">${val.status}</span>
+          `;
+          div.onclick=()=>openModal(id,val);
+          list.appendChild(div);
+      });
+  });
+}
+
+// ===== Modal =====
+window.openModal = function(ticketId,ticket){
+  document.getElementById("modalSubject").innerText=ticket.subject;
+  document.getElementById("modalMessage").innerText=ticket.message;
+  document.getElementById("modalDate").innerText=ticket.date;
+  document.getElementById("modalStatus").innerText=ticket.status;
+
+  const answerBox = document.getElementById("modalAnswer");
+  if(ticket.answer && ticket.answer.trim()!==""){
+      answerBox.innerHTML = `<b>Support Answer:</b><br>${ticket.answer}`;
+  } else {
+      answerBox.innerHTML = `<i>⏳ Awaiting reply from support team...</i>`;
+  }
+
+  // Mark as seen if answered
+  if(ticket.answer && ticket.answer.trim()!==""){
+      update(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), { seen:true });
+  }
+
+  document.getElementById("ticketModal").style.display="flex";
+}
+window.closeModal = function(){
+  document.getElementById("ticketModal").style.display="none";
+}
+
+// ===== Auth & Init =====
+onAuthStateChanged(auth,(user)=>{
+  if(user){
+      encodedEmail=encodeEmail(user.email);
+      loadTickets();
+  } else {
+      window.location.href="login.html";
+  }
+});
+</script>
+</body>
+</html>

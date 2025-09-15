@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo">MyBrand</div>
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="form-container">
+            <div class="button-group">
+                <button id="login-btn" class="active">Login</button>
+                <button id="create-btn">Create Account</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form">
+                <input type="email" id="login-email" placeholder="Email" required>
+                <input type="password" id="login-password" placeholder="Password" required>
+                <button type="submit">Login</button>
+            </form>
+
+            <!-- Create Account Form -->
+            <form id="create-form" style="display: none;">
+                <input type="text" id="create-name" placeholder="Full Name" required>
+                <input type="email" id="create-email" placeholder="Email" required>
+                <input type="password" id="create-password" placeholder="Password" required>
+                <input type="password" id="create-confirm" placeholder="Confirm Password" required>
+                <input type="text" id="create-referral" placeholder="Referral Code (Optional)">
+                <button type="submit">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <ul>
+            <li><a href="#">Terms & Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Help</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <p>&copy; 2025 MyBrand. All Rights Reserved.</p>
+    </footer>
+
+    <!-- Firebase SDKs & login.js -->
+    <script type="module" src="login.js"></script>
+</body>
+</html>

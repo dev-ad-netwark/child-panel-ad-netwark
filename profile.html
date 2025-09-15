@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👤 Profile — Premium Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+
+<style>
+body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0; padding:0; }
+
+/* ===== Navbar ===== */
+.navbar {
+    background:linear-gradient(90deg,#c9c9c9,#e6e6e6);
+    padding:12px 20px;
+    display:flex; justify-content:space-between; align-items:center;
+    box-shadow:0 2px 8px rgba(0,0,0,0.25);
+    position:sticky; top:0; z-index:100;
+}
+.navbar h1 { margin:0; font-size:1.5rem; font-weight:700; color:#333; letter-spacing:1px; }
+.navbar .nav-right { display:flex; align-items:center; gap:20px; }
+.navbar .bell { font-size:1.5rem; cursor:pointer; position:relative; color:#444; }
+.navbar .bell::after {
+    content:''; width:8px; height:8px; background:red; border-radius:50%;
+    position:absolute; top:2px; right:2px;
+}
+.navbar .hamburger { font-size:1.8rem; cursor:pointer; color:#333; display:block; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    position:fixed; top:0; left:-100%; width:260px; height:100%;
+    background:linear-gradient(180deg,#dcdcdc,#f5f5f5);
+    padding:25px 20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.2); transition:0.3s;
+    z-index:300;
+}
+.sidebar a {
+    text-decoration:none; color:#222; font-weight:500; padding:12px 14px;
+    border-radius:8px; transition:0.3s;
+}
+.sidebar a:hover { background:#999; color:#fff; }
+.sidebar.show { left:0; }
+
+/* ===== Overlay ===== */
+.overlay {
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:rgba(0,0,0,0.45);
+    z-index:200;
+    display:none;
+}
+.overlay.active { display:block; }
+
+/* ===== Main Content ===== */
+.main-content { padding:20px; max-width:700px; margin:auto; transition:0.3s; }
+
+/* ===== Profile Card ===== */
+.profile-card {
+    background:linear-gradient(135deg,#e8e8e8,#cfcfcf);
+    padding:25px; border-radius:14px;
+    box-shadow:0 4px 14px rgba(0,0,0,0.2);
+    margin-bottom:20px;
+    text-align:center;
+}
+.profile-card img {
+    width:100px; height:100px; border-radius:50%;
+    object-fit:cover; margin-bottom:15px; border:3px solid #999;
+}
+.profile-card h2 { margin:10px 0 5px 0; font-size:1.4rem; color:#333; }
+.profile-card p { margin:0 0 15px 0; font-size:1rem; color:#555; }
+
+/* ===== Social Buttons ===== */
+.social-links {
+    display:flex; justify-content:center; gap:15px; margin-bottom:15px;
+}
+.social-links a {
+    display:inline-block; padding:10px 15px; border-radius:8px;
+    text-decoration:none; color:#fff; font-weight:500;
+}
+.social-links a.instagram { background:#e4405f; }
+.social-links a.telegram { background:#0088cc; }
+.social-links a:hover { opacity:0.85; }
+
+/* ===== Profile Form ===== */
+.profile-form { display:flex; flex-direction:column; gap:12px; margin-bottom:30px; }
+.profile-form label { font-weight:500; }
+.profile-form input, .profile-form button {
+    padding:10px 12px; border-radius:8px; border:1px solid #ccc; font-size:1rem;
+}
+.profile-form input { width:100%; }
+.profile-form button {
+    background:#999; color:#fff; border:none; font-weight:600; cursor:pointer; transition:0.3s;
+}
+.profile-form button:hover { background:#777; }
+
+/* ===== Notifications Panel ===== */
+#notificationsPanel {
+    position:fixed;
+    top:0;
+    right:-350px;
+    width:300px; height:100%;
+    background:#f5f5f5;
+    box-shadow:-2px 0 10px rgba(0,0,0,0.3);
+    padding:20px;
+    transition:0.3s;
+    overflow-y:auto;
+    z-index:400;
+}
+#notificationsPanel.show { right:0; }
+#notificationsPanel h2 {
+    margin:0 0 15px 0; font-size:1.3rem; color:#333;
+    display:flex; align-items:center; justify-content:space-between;
+}
+#notificationsPanel .back-btn {
+    font-size:1rem; cursor:pointer; color:#333; background:none; border:none;
+}
+.notification-item {
+    padding:12px; border-radius:10px;
+    margin-bottom:12px; background:#e6e6e6;
+    cursor:pointer; transition:0.3s;
+}
+.notification-item.unread { font-weight:600; background:#d9d9d9; border-left:4px solid #999; }
+.notification-item:hover { background:#ccc; }
+
+/* ===== Responsive ===== */
+@media(max-width:992px){
+    #notificationsPanel { width:260px; }
+}
+</style>
+
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h1>👤 Profile</h1>
+  <div class="nav-right">
+      <div class="bell" onclick="toggleNotifications()" title="Notifications">&#128276;</div>
+      <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="links.html">🔗 Links</a>
+    <a href="withdrawal.html">💵 Withdrawal</a>
+    <a href="support.html">📩 Support</a>
+    <a href="announcements.html">📢 Announcements</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+</div>
+
+<!-- Overlay -->
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+  <!-- Profile Card -->
+  <div class="profile-card">
+    <img src="https://via.placeholder.com/100" alt="Profile Picture" id="profilePic">
+    <h2 id="username">User Name</h2>
+    <p id="email">user@example.com</p>
+
+    <div class="social-links">
+      <a href="#" class="instagram" target="_blank">Instagram</a>
+      <a href="#" class="telegram" target="_blank">Telegram</a>
+    </div>
+
+    <a href="privacy.html" style="display:inline-block; margin-top:10px; color:#333; text-decoration:underline;">Privacy Policy</a>
+  </div>
+
+  <!-- Profile Form -->
+  <div class="profile-form">
+    <label for="editUsername">Username</label>
+    <input type="text" id="editUsername">
+    
+    <label for="editEmail">Email</label>
+    <input type="email" id="editEmail" disabled> <!-- Email change disable -->
+    
+    <label for="editPassword">Password</label>
+    <input type="password" id="editPassword" placeholder="Enter new password">
+
+    <button onclick="saveProfile()">💾 Save Profile</button>
+  </div>
+
+</div>
+
+<!-- Notifications Panel -->
+<div id="notificationsPanel">
+  <h2>
+    Notifications
+    <button class="back-btn" onclick="toggleNotifications()">← Back</button>
+  </h2>
+  <div id="notificationsList"></div>
+</div>
+
+<script type="module">
+// ================= Firebase Setup =================
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+import { getAuth, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
+import { firebaseConfig } from './config.js';
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+// Encode email for Firebase key
+function encodeEmail(email) {
+  return email.replace(/\./g, "_");
+}
+
+// ================= Sidebar toggle =================
+window.toggleSidebar = function(){
+    document.getElementById('sidebar').classList.toggle('show');
+    document.getElementById('overlay').classList.toggle('active');
+}
+window.closeSidebar = function(){
+    document.getElementById('sidebar').classList.remove('show');
+    document.getElementById('overlay').classList.remove('active');
+}
+
+// ================= Notifications =================
+const notifications = [];
+for(let i=1;i<=5;i++){
+    notifications.push({id:i, text:`🔔 Notification ${i} for Profile`, unread:Math.random()>0.5});
+}
+window.toggleNotifications = function(){
+    document.getElementById('notificationsPanel').classList.toggle('show');
+}
+function renderNotifications(){
+    const container=document.getElementById('notificationsList');
+    container.innerHTML="";
+    notifications.forEach(n=>{
+        const div=document.createElement("div");
+        div.className="notification-item"+(n.unread?" unread":"");
+        div.innerText=n.text;
+        div.onclick=()=>{n.unread=false; div.classList.remove("unread");};
+        container.appendChild(div);
+    });
+}
+
+// ================= Load User Data =================
+async function loadUser(user){
+    const userId = encodeEmail(user.email);
+    const snapshot = await get(ref(db, `child_panel/${userId}`));
+    if(snapshot.exists()){
+        const data = snapshot.val();
+        document.getElementById("username").innerText = data.name || "No Name";
+        document.getElementById("email").innerText = user.email;
+        document.getElementById("editUsername").value = data.name || "";
+        document.getElementById("editEmail").value = user.email;
+    }
+}
+
+// ================= Save Profile =================
+window.saveProfile = async function(){
+    const user = auth.currentUser;
+    if(!user) return;
+
+    const newName = document.getElementById('editUsername').value;
+    const newPassword = document.getElementById('editPassword').value;
+    const userId = encodeEmail(user.email);
+
+    try {
+        // Update DB
+        await update(ref(db, `child_panel/${userId}`), { name: newName });
+
+        // Update Password if entered
+        if(newPassword.trim() !== ""){
+            await updatePassword(user, newPassword);
+            alert("✅ Profile & Password updated successfully!");
+        } else {
+            alert("✅ Profile updated successfully!");
+        }
+
+        document.getElementById("username").innerText = newName;
+        document.getElementById("editPassword").value = "";
+
+    } catch(err){
+        console.error(err);
+        alert("Error updating profile: " + err.message);
+    }
+}
+
+// ================= Logout =================
+window.logout = async function(){
+    await signOut(auth);
+    window.location.href="login.html";
+}
+
+// ================= Auth State =================
+onAuthStateChanged(auth, (user) => {
+    if(user){
+        loadUser(user);
+    } else {
+        window.location.href="login.html";
+    }
+});
+
+// ================= Init =================
+renderNotifications();
+
+</script>
+</body>
+</html>

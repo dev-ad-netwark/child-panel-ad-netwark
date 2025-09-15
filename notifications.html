@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔔 Notifications — Silver Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body { font-family:'Roboto',sans-serif; background:#f5f5f7; color:#111; margin:0; padding:0; }
+
+/* ===== Navbar ===== */
+.navbar {
+    background:#c0c0c0;
+    padding:12px 20px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 6px rgba(0,0,0,0.1);
+    position:sticky; top:0; z-index:100;
+}
+.navbar h1 { margin:0; font-size:1.6rem; }
+.navbar .nav-right { display:flex; align-items:center; gap:15px; }
+.navbar .bell { font-size:1.3rem; cursor:pointer; position:relative; }
+.navbar .bell::after {
+    content:''; width:8px; height:8px; background:red; border-radius:50%;
+    position:absolute; top:0; right:0;
+}
+.navbar .hamburger { font-size:1.6rem; cursor:pointer; display:none; }
+
+/* ===== Sidebar ===== */
+.sidebar {
+    position:fixed; top:0; left:0; width:220px; height:100%; background:#d0d0d0;
+    padding:20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.05); transition:0.3s;
+}
+.sidebar a { text-decoration:none; color:#111; font-weight:500; padding:8px 12px; border-radius:8px; transition:0.3s; }
+.sidebar a:hover { background:#c8c8c8; }
+.sidebar.hidden { transform: translateX(-240px); }
+
+/* ===== Main Content ===== */
+.main-content { margin-left:240px; padding:20px; transition:0.3s; }
+.main-content.full { margin-left:0; }
+
+/* ===== Notifications List ===== */
+.notifications-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; }
+.notifications-header h2 { margin:0; font-size:1.2rem; }
+.notifications-header button { padding:6px 12px; border:none; border-radius:6px; background:#c0c0c0; cursor:pointer; transition:0.3s; }
+.notifications-header button:hover { background:#999; color:#fff; }
+
+.notifications-list { display:flex; flex-direction:column; gap:10px; }
+.notification-item { background:#fff; padding:15px; border-radius:10px; box-shadow:0 2px 8px rgba(0,0,0,0.05); transition:0.3s; cursor:pointer; }
+.notification-item:hover { background:#e2e2e2; }
+.notification-item.unread { font-weight:600; }
+
+.pagination { margin-top:15px; display:flex; justify-content:center; gap:8px; flex-wrap:wrap; }
+.page-btn { padding:8px 12px; border-radius:8px; border:none; background:#c0c0c0; cursor:pointer; transition:0.3s; }
+.page-btn:hover { background:#999; color:#fff; }
+.page-btn.active { background:#4a90e2; color:#fff; }
+
+/* ===== Responsive ===== */
+@media(max-width:992px){
+    .sidebar { transform:translateX(-240px); position:fixed; z-index:200; }
+    .sidebar.show { transform:translateX(0); }
+    .navbar .hamburger { display:block; }
+    .main-content { margin-left:0; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<div class="navbar">
+  <h1>Silver Dashboard</h1>
+  <div class="nav-right">
+      <div class="bell" title="Notifications">&#128276;</div>
+      <div class="hamburger" onclick="toggleSidebar()">&#9776;</div>
+  </div>
+</div>
+
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <a href="dashboard.html">🏠 Dashboard</a>
+    <a href="links.html">🔗 Links</a>
+    <a href="withdrawal.html">💵 Withdrawal</a>
+    <a href="support.html">📩 Support</a>
+    <a href="announcements.html">📢 Announcements</a>
+    <a href="profile.html">👤 Profile</a>
+    <a href="settings.html">⚙️ Settings</a>
+    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content" id="mainContent">
+  <div class="notifications-header">
+    <h2>Notifications</h2>
+    <button onclick="markAllRead()">Mark All Read</button>
+  </div>
+
+  <div class="notifications-list" id="notificationsList"></div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js"></script>
+
+<script>
+// ===== Firebase Config =====
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_APP.firebaseapp.com",
+    databaseURL: "https://YOUR_APP.firebaseio.com",
+    projectId: "YOUR_APP",
+    storageBucket: "YOUR_APP.appspot.com",
+    messagingSenderId: "000000000000",
+    appId: "1:000000000000:web:xxxxxxxx"
+};
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.database();
+
+let notifications = [];
+let currentPage = 1;
+const rowsPerPage = 5;
+let encodedEmail = null;
+
+// ===== Load Notifications from Firebase =====
+auth.onAuthStateChanged(user => {
+    if(user){
+        encodedEmail = user.email.replace(/\./g,"_");
+        const ref = db.ref(`child_panel/${encodedEmail}/notifications`);
+        ref.on("value", snap=>{
+            const data = snap.val() || {};
+            notifications = Object.entries(data).map(([id,val])=>({
+                id, ...val
+            }));
+            notifications.reverse(); // latest first
+            renderNotifications(currentPage);
+        });
+    } else {
+        window.location.href="login.html";
+    }
+});
+
+// ===== Render Notifications =====
+function renderNotifications(page){
+    const start = (page-1)*rowsPerPage;
+    const end = start+rowsPerPage;
+    const list = notifications.slice(start,end);
+    const container = document.getElementById('notificationsList');
+    container.innerHTML = '';
+
+    list.forEach(n=>{
+        const div = document.createElement('div');
+        div.className = 'notification-item'+(!n.read?' unread':'');
+        div.innerText = `${n.title || "Notification"}: ${n.message || ""}`;
+        div.onclick = ()=>{
+            db.ref(`child_panel/${encodedEmail}/notifications/${n.id}/read`).set(true);
+        };
+        container.appendChild(div);
+    });
+
+    renderPagination();
+}
+
+// ===== Pagination =====
+function renderPagination(){
+    const totalPages = Math.ceil(notifications.length/rowsPerPage);
+    const container = document.getElementById('pagination');
+    container.innerHTML = '';
+    for(let i=1;i<=totalPages;i++){
+        const btn = document.createElement('button');
+        btn.className = 'page-btn'+(i===currentPage?' active':'');
+        btn.innerText = i;
+        btn.onclick = ()=>{ currentPage=i; renderNotifications(currentPage); }
+        container.appendChild(btn);
+    }
+}
+
+// ===== Mark All Read =====
+function markAllRead(){
+    if(!encodedEmail) return;
+    notifications.forEach(n=>{
+        db.ref(`child_panel/${encodedEmail}/notifications/${n.id}/read`).set(true);
+    });
+}
+
+// ===== Sidebar toggle =====
+function toggleSidebar(){
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('show');
+}
+</script>
+
+</body>
+</html>

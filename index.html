@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium Ad Network - Direct Link Ads</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  
+/* ====== Base Styles ====== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ====== Navbar ====== */
+.navbar {
+  background: linear-gradient(90deg, #2c3e50, #3d4f65);
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(6px);
+}
+
+.navbar div:first-child {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.navbar a {
+  color: #ecf0f1;
+  text-decoration: none;
+  margin-left: 20px;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.navbar a:hover {
+  color: #1abc9c;
+  transform: translateY(-2px);
+}
+
+/* ====== Main Section ====== */
+.main {
+  max-width: 950px;
+  margin: 50px auto;
+  background: rgba(255, 255, 255, 0.85);
+  padding: 35px;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  backdrop-filter: blur(10px);
+}
+
+.main h2 {
+  text-align: center;
+  margin-bottom: 25px;
+  color: #2c3e50;
+  font-size: 1.8rem;
+}
+
+.main h3 {
+  margin-top: 28px;
+  color: #34495e;
+  margin-bottom: 14px;
+  font-size: 1.2rem;
+}
+
+.main p {
+  margin-bottom: 16px;
+  color: #555;
+}
+
+/* ====== Form ====== */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+form input[type="email"],
+form input[type="password"],
+form input[type="text"] {
+  padding: 14px 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #1abc9c;
+  box-shadow: 0 0 6px rgba(26, 188, 156, 0.5);
+}
+
+form input[type="submit"] {
+  background: linear-gradient(135deg, #1abc9c, #16a085);
+  color: #fff;
+  padding: 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+  background: linear-gradient(135deg, #16a085, #1abc9c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(26,188,156,0.4);
+}
+
+/* ====== Message Box ====== */
+.message {
+  padding: 14px;
+  border-radius: 10px;
+  margin: 14px 0;
+  font-size: 0.95rem;
+}
+
+.message.success {
+  background: #e8f9f3;
+  color: #1e7e34;
+  border: 1px solid #b6e0c3;
+}
+
+.message.error {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5b5b2;
+}
+
+/* ====== Toggle ====== */
+.toggle {
+  text-align: center;
+  margin: 14px 0 22px;
+  font-size: 0.95rem;
+}
+
+.toggle a {
+  color: #1abc9c;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.toggle a:hover {
+  color: #16a085;
+  text-decoration: underline;
+}
+
+/* ====== CPM List ====== */
+.cpm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+.cpm-item {
+  background: #fdfdfd;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border-left: 6px solid #1abc9c;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+}
+
+.cpm-item:hover {
+  transform: translateX(6px);
+  background: #eefdf9;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+}
+
+/* ====== Footer ====== */
+footer {
+  text-align: center;
+  padding: 22px;
+  background: linear-gradient(90deg, #2c3e50, #3d4f65);
+  color: #fff;
+  margin-top: 50px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+footer .links {
+  margin-top: 12px;
+}
+
+footer .links a {
+  color: #1abc9c;
+  text-decoration: none;
+  margin: 0 8px;
+  font-size: 0.95rem;
+  transition: color 0.3s ease;
+}
+
+footer .links a:hover {
+  text-decoration: underline;
+  color: #16a085;
+}
+
+/* ====== Responsive ====== */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .main {
+    margin: 20px;
+    padding: 24px;
+  }
+
+  .cpm-list {
+    gap: 10px;
+  }
+}
+
+
+
+</style>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+</head>
+<body>
+
+<div class="navbar">
+    <div>AdNetwork</div>
+    <div>
+        <a href="#">Home</a>
+        <a href="#">Features</a>
+        <a href="#">Contact</a>
+    </div>
+</div>
+
+<div class="main">
+    <h2 id="formTitle">Login</h2>
+    <form id="authForm">
+        <input type="email" id="email" placeholder="Email Address" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="submit" value="Login">
+    </form>
+    <div id="message" class="message" style="display: none;"></div>
+    <div class="toggle">
+        Don’t have an account? <a id="toggleLink">Sign Up</a>
+    </div>
+
+    <h3>Direct Link Example</h3>
+    <p><strong>Direct Link:</strong>
+        <a href="#">https://adnetwork.com/directlink/12345</a>
+    </p>
+    <p>
+        Use this direct link in your website, blog, or app to monetize traffic easily.
+        Each valid visit generates revenue based on CPM rates below.
+    </p>
+
+    <h3>Top 20 Direct Link CPM Rates (USD)</h3>
+    <div class="cpm-list">
+        <div class="cpm-item"><strong>1. USA — $18.50</strong> – Highest paying traffic with premium advertisers.</div>
+        <div class="cpm-item"><strong>2. Canada — $15.20</strong> – Strong advertiser demand and quality audience.</div>
+        <div class="cpm-item"><strong>3. UK — $14.80</strong> – Excellent conversion and stable CPM rates.</div>
+        <div class="cpm-item"><strong>4. Australia — $13.60</strong> – Popular for entertainment and mobile traffic.</div>
+        <div class="cpm-item"><strong>5. Germany — $12.40</strong> – High demand for e-commerce & tech ads.</div>
+        <div class="cpm-item"><strong>6. France — $11.90</strong> – Consistent performance with local advertisers.</div>
+        <div class="cpm-item"><strong>7. Netherlands — $11.50</strong> – High user engagement & good conversions.</div>
+        <div class="cpm-item"><strong>8. Italy — $10.80</strong> – Popular for fashion, lifestyle, and tech traffic.</div>
+        <div class="cpm-item"><strong>9. Spain — $10.20</strong> – Strong mobile & entertainment campaigns.</div>
+        <div class="cpm-item"><strong>10. UAE — $9.80</strong> – Luxury and finance ads perform very well.</div>
+        <div class="cpm-item"><strong>11. Singapore — $9.40</strong> – Premium finance & travel advertiser demand.</div>
+        <div class="cpm-item"><strong>12. Japan — $9.20</strong> – Gaming & mobile apps drive high CPMs.</div>
+        <div class="cpm-item"><strong>13. South Korea — $8.90</strong> – Mobile-first audience with strong engagement.</div>
+        <div class="cpm-item"><strong>14. Saudi Arabia — $8.70</strong> – High-paying luxury and finance campaigns.</div>
+        <div class="cpm-item"><strong>15. Brazil — $7.60</strong> – Emerging market with growing advertiser demand.</div>
+        <div class="cpm-item"><strong>16. Mexico — $6.90</strong> – Affordable traffic, stable returns.</div>
+        <div class="cpm-item"><strong>17. South Africa — $6.40</strong> – Good mobile reach, average CPMs.</div>
+        <div class="cpm-item"><strong>18. Turkey — $6.10</strong> – Strong growth in entertainment traffic.</div>
+        <div class="cpm-item"><strong>19. India — $5.80</strong> – Huge traffic potential with steady payouts.</div>
+        <div class="cpm-item"><strong>20. Pakistan — $5.20</strong> – Emerging advertiser demand, good growth.</div>
+    </div>
+
+    <p>
+        Our direct link CPM rates are estimated based on global advertiser demand
+        and may vary depending on traffic quality, niche, and audience behavior.
+        Premium countries like USA, UK, and Canada generate the highest CPM,
+        while emerging markets offer steady long-term growth.
+    </p>
+</div>
+
+<footer>
+    <p>&copy; 2025 Premium AdNetwork. All rights reserved.</p>
+    <div class="links">
+        <a href="terms.html">Terms & Conditions</a> |
+        <a href="privacy.html">Privacy Policy</a> |
+        <a href="contact.html">Contact</a> |
+        <a href="help.html">Help</a>
+    </div>
+</footer>
+
+<script>
+    // --- 1. SELECTING HTML ELEMENTS (एलिमेंट्स को चुनना) ---
+    const formTitle = document.getElementById("formTitle");
+    const authForm = document.getElementById("authForm");
+    const toggleLink = document.getElementById("toggleLink");
+    const messageDiv = document.getElementById("message");
+
+    // --- 2. HELPER FUNCTIONS (सहायक फंक्शन्स) ---
+    function showMessage(msg, type) {
+        if (messageDiv) {
+            messageDiv.textContent = msg;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = "block";
+        }
+    }
+
+    function hideMessage() {
+        if (messageDiv) {
+            messageDiv.style.display = "none";
+        }
+    }
+
+    function sanitizeEmailForFirebase(email) {
+        return email.replace(/\./g, '_');
+    }
+    
+    function generateReferralCode() {
+        return 'RF' + Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+
+    function getLast10Days() {
+        const days = {};
+        for (let i = 9; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dateString = date.toISOString().slice(0, 10);
+            days[dateString] = { impressions: 0, earnings: 0, cpm: 0 };
+        }
+        return days;
+    }
+    
+    function getInitialLinkData() {
+        const days = {};
+        for (let i = 4; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(date.getDate() - i);
+            const dayName = `day${5 - i}`;
+            days[dayName] = { views: 0, clicks: 0 };
+        }
+        return days;
+    }
+
+    // Function to toggle between Login and Sign Up forms
+    function toggleForm() {
+        if (formTitle.textContent === "Login") {
+            formTitle.textContent = "Sign Up";
+            authForm.innerHTML = `
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email Address" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+                <input type="text" id="referralCode" placeholder="Referral Code (Optional)" minlength="5" maxlength="20">
+                <input type="submit" value="Sign Up">
+            `;
+            toggleLink.textContent = "Login";
+            document.querySelector(".toggle").childNodes[0].nodeValue = 'Already have an account? ';
+        } else {
+            formTitle.textContent = "Login";
+            authForm.innerHTML = `
+                <input type="email" id="email" placeholder="Email Address" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <input type="submit" value="Login">
+            `;
+            toggleLink.textContent = "Sign Up";
+            document.querySelector(".toggle").childNodes[0].nodeValue = 'Don’t have an account? ';
+        }
+        hideMessage();
+    }
+
+    // --- 3. INITIALIZATION AND EVENT LISTENERS (शुरुआत और इवेंट्स) ---
+    
+    // Initialize Firebase
+    let auth, database;
+    try {
+        if (typeof firebaseConfig !== 'undefined') {
+            firebase.initializeApp(firebaseConfig);
+            auth = firebase.auth();
+            database = firebase.database();
+        } else {
+            showMessage("Firebase configuration is missing! Check config.js file.", "error");
+        }
+    } catch (error) {
+        console.error("Firebase initialization error:", error);
+        showMessage("Could not initialize the application.", "error");
+    }
+
+    // Add event listener for the toggle link
+    if (toggleLink) {
+        toggleLink.addEventListener('click', toggleForm);
+    }
+    
+    // Main event listener for form submission
+    if (authForm) {
+        authForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage();
+
+            const formType = formTitle.textContent;
+
+            // ***** SIGN UP LOGIC *****
+            if (formType === "Sign Up") {
+                const email = authForm.querySelector('#email').value;
+                const password = authForm.querySelector('#password').value;
+                const name = authForm.querySelector('#name').value;
+                const confirmPassword = authForm.querySelector('#confirmPassword').value;
+                const referralCode = authForm.querySelector('#referralCode').value;
+                
+                if (password !== confirmPassword) {
+                    showMessage("Passwords do not match!", "error");
+                    return;
+                }
+
+                try {
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    const sanitizedEmail = sanitizeEmailForFirebase(email);
+                    const userRef = database.ref('child_panel/' + sanitizedEmail);
+
+                    const initialUserData = {
+                        name: name,
+                        email: email,
+                        lastLogin: new Date().toISOString(),
+                        referralCode: generateReferralCode(),
+                        referredBy: referralCode || "00000",
+                        referralPercent: 0,
+                        dashboard: {
+                            summary: {
+                                dailyIncome: 0,
+                                totalEarnings: 0,
+                                totalWithdrawal: 0,
+                                totalAvailable: 0
+                            },
+                            dailyStats: getLast10Days()
+                        },
+                        links: {},
+                        withdrawals: {
+                            totalAmount: 0,
+                            pending: {},
+                            cancelled: {},
+                            history: {}
+                        },
+                        support: {},
+                        profile: {
+                            passwordLastChanged: new Date().toISOString().slice(0, 10),
+                            lastLogin: new Date().toISOString(),
+                            email: email,
+                            referralPercent: 0,
+                            extraSettings: {
+                                theme: "default",
+                                notifications: true
+                            }
+                        },
+                        notifications: {}
+                    };
+                    
+                    await userRef.set(initialUserData);
+                    showMessage("Sign up successful! Redirecting...", "success");
+                    window.location.href = "dashboard.html";
+
+                } catch (error) {
+                    console.error("Sign up error:", error);
+                    showMessage(`Sign up failed: ${error.message}`, "error");
+                }
+            } 
+            // ***** LOGIN LOGIC *****
+            else { 
+                const email = authForm.querySelector('#email').value;
+                const password = authForm.querySelector('#password').value;
+                
+                try {
+                    const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                    const user = userCredential.user;
+                    
+                    const sanitizedEmail = sanitizeEmailForFirebase(user.email);
+                    const userRef = database.ref('child_panel/' + sanitizedEmail);
+                    
+                    userRef.child('lastLogin').set(new Date().toISOString());
+                    
+                    showMessage("Login successful! Redirecting...", "success");
+                    window.location.href = "dashboard.html";
+
+                } catch (error) {
+                    console.error("Login error:", error);
+                    showMessage(`Login failed: ${error.message}`, "error");
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

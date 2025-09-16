@@ -15,7 +15,8 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ===== Logout =====
-document.getElementById('logoutBtn').addEventListener('click', async () => {
+document.getElementById('logoutBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
     await signOut(auth);
     window.location.href = "login.html";
 });
@@ -32,10 +33,13 @@ const bell = document.getElementById('bell');
 const notificationsPanel = document.getElementById('notificationsPanel');
 const backBtn = document.getElementById('backBtn');
 const notificationsList = document.getElementById('notificationsList');
+
 const notifications = [];
-for(let i=1;i<=8;i++){ notifications.push({id:i,text:`🔔 Notification ${i}`, unread:Math.random()>0.5}); }
+for(let i=1;i<=5;i++){ notifications.push({id:i,text:`🔔 Notification ${i}`, unread:true}); }
+
 bell.addEventListener('click', ()=> notificationsPanel.classList.toggle('show'));
 backBtn.addEventListener('click', ()=> notificationsPanel.classList.remove('show'));
+
 function renderNotifications(){
   notificationsList.innerHTML = "";
   notifications.forEach(n=>{
@@ -57,7 +61,9 @@ const linksGrid = document.getElementById('linksGrid');
 let links = [];
 const maxLinks = 20;
 
-createBtn.addEventListener('click', ()=>{ categoryMenu.style.display = (categoryMenu.style.display==="none"||categoryMenu.style.display==="")?"block":"none"; });
+createBtn.addEventListener('click', ()=>{ 
+    categoryMenu.style.display = categoryMenu.style.display==="block" ? "none" : "block"; 
+});
 
 // ===== Unique 6-char code generator =====
 function generateUniqueCode(existingCodes){
@@ -79,17 +85,22 @@ categoryButtons.forEach(btn=>{
         const type = btn.dataset.type;
         if(links.length >= maxLinks){ alert("⚠️ Maximum 20 links allowed!"); return; }
 
-        const userId = auth.currentUser.email;
-        const encodedEmail = encodeEmail(userId);
+        const userEmail = auth.currentUser.email;
+        const encodedEmail = encodeEmail(userEmail);
         const userRef = ref(db, `child_panel/${encodedEmail}/links`);
+        const globalRef = ref(db, `all_links`);
 
-        // Get existing links
+        // Get existing user links
         const snapshot = await get(userRef);
         const existingLinks = snapshot.exists() ? snapshot.val() : {};
-        const existingCodes = Object.values(existingLinks).map(l=>l.code);
 
-        // Generate unique code
-        const code = generateUniqueCode(existingCodes);
+        // Get all global codes
+        const globalSnap = await get(globalRef);
+        const globalLinks = globalSnap.exists() ? globalSnap.val() : {};
+        const globalCodes = Object.values(globalLinks).map(l=>l.code);
+
+        // Generate unique code across ALL users
+        const code = generateUniqueCode(globalCodes);
 
         // Domain prefix
         let prefix = type==='movie'?'m':type==='adult'?'a':'al';
@@ -101,18 +112,34 @@ categoryButtons.forEach(btn=>{
             day4:{views:0,clicks:0}, day5:{views:0,clicks:0}
         };
 
-        // Determine link key
-        const linkKey = `link${Object.keys(existingLinks || {}).length + 1}`;
+        // Timestamp
+        const dateCreated = new Date().toISOString();
 
-        // New link object
-        const newLink = { url, type, code, dashboard5Days };
+        // Link key
+        const linkKey = `link${Object.keys(existingLinks).length + 1}`;
 
-        // Save in Firebase
+        // New link object with extra useful info
+        const newLink = {
+            url,
+            type,
+            code,
+            dashboard5Days,
+            createdBy: userEmail,
+            dateCreated
+        };
+
+        // Save in user's panel
         await set(child(userRef, linkKey), newLink);
 
-        // Update local links array
-        links = [...Object.values(existingLinks || {}), newLink];
+        // Save globally for uniqueness check
+        await set(child(globalRef, code), {
+            ...newLink,
+            userKey: linkKey,
+            userEmail: userEmail
+        });
 
+        // Update local array & render
+        links.push(newLink);
         categoryMenu.style.display='none';
         renderLinks();
     });
@@ -138,6 +165,8 @@ function renderLinks(){
             <h3>Direct Link #${i+1}</h3>
             <p>${link.url}</p>
             <p>${typeLabel} Link</p>
+            <p>Created: ${new Date(link.dateCreated).toLocaleString()}</p>
+            <p>By: ${link.createdBy}</p>
             <button class="dashboard-btn">📅 5-Day Dashboard</button>
             <button class="delete-btn" style="margin-top:8px; background:#b30000;">🗑 Delete</button>
             <div class="dashboard" style="display:none;"></div>
@@ -165,6 +194,7 @@ function renderLinks(){
                 const encodedEmail = encodeEmail(auth.currentUser.email);
                 const linkKey = `link${i+1}`;
                 await remove(ref(db, `child_panel/${encodedEmail}/links/${linkKey}`));
+                await remove(ref(db, `all_links/${link.code}`));
                 links.splice(i,1);
                 renderLinks();
             }

@@ -1,11 +1,10 @@
-// config.js
 export const firebaseConfig = {
-  apiKey: "AIzaSyB0O09vY4UF-FX-oO8yn4UMR8M2AujBYGs",
-  authDomain: "ad-netwark.firebaseapp.com",
-  databaseURL: "https://ad-netwark-default-rtdb.firebaseio.com",
-  projectId: "ad-netwark",
-  storageBucket: "ad-netwark.firebasestorage.app",
-  messagingSenderId: "690404975205",
-  appId: "1:690404975205:web:f91030a28a70b4abe41c8c",
-  measurementId: "G-HSJDQYMSH0"
+  apiKey: "AIzaSyB16NyfxImqCWEqFAiz4aubP8SCCkJI2dg",
+  authDomain: "ad-netwark-child-panel.firebaseapp.com",
+  databaseURL: "https://ad-netwark-child-panel-default-rtdb.firebaseio.com",
+  projectId: "ad-netwark-child-panel",
+  storageBucket: "ad-netwark-child-panel.firebasestorage.app",
+  messagingSenderId: "770179601985",
+  appId: "1:770179601985:web:d316cbb2870bac461e18c0",
+  measurementId: "G-Q0R853L60K"
 };

@@ -153,7 +153,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 
   <div class="settings-card">
     <h2>Profile Settings</h2>
-    <img src="https://via.placeholder.com/80" alt="Profile Picture" class="profile-pic" id="profilePic">
+    <img src="" alt="Profile Picture" class="profile-pic" id="profilePic">
     <input type="file" id="profileUpload" accept="image/*" onchange="updateProfilePic(event)">
 
     <label for="email">Change Email</label>
@@ -208,6 +208,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
+// ===== Global Default Profile Image =====
+const DEFAULT_PROFILE = "https://via.placeholder.com/80?text=DOMI";
+
 // Encode email for Firebase key
 function encodeEmail(email){ return email.replace(/\./g,"_"); }
 
@@ -245,7 +248,7 @@ window.updateProfilePic = function(event){
     const reader=new FileReader();
     reader.onload=function(){
         document.getElementById('profilePic').src=reader.result;
-        localStorage.setItem("profilePic", reader.result); // save locally
+        localStorage.setItem("profilePic", reader.result);
     }
     reader.readAsDataURL(event.target.files[0]);
 }
@@ -260,7 +263,7 @@ window.saveSettings = async function(){
     const theme=document.getElementById('theme').value;
     const notif=document.getElementById('notifications').checked;
     const twofa=document.getElementById('twofa').checked;
-    const pic=document.getElementById('profilePic').src;
+    const pic=document.getElementById('profilePic').src || DEFAULT_PROFILE;
 
     const userId=encodeEmail(user.email);
 
@@ -291,7 +294,7 @@ window.resetSettings = function(){
     document.getElementById('theme').value="light";
     document.getElementById('notifications').checked=true;
     document.getElementById('twofa').checked=false;
-    document.getElementById('profilePic').src="https://via.placeholder.com/80";
+    document.getElementById('profilePic').src=DEFAULT_PROFILE;
     showToast("♻️ Settings reset!");
 }
 
@@ -314,7 +317,9 @@ onAuthStateChanged(auth, async (user)=>{
         document.getElementById('theme').value=data.theme||"light";
         document.getElementById('notifications').checked=data.notifications??true;
         document.getElementById('twofa').checked=data.twoFA??false;
-        document.getElementById('profilePic').src=data.profilePic||"https://via.placeholder.com/80";
+        document.getElementById('profilePic').src=data.profilePic||DEFAULT_PROFILE;
+    } else {
+        document.getElementById('profilePic').src=DEFAULT_PROFILE;
     }
 });
 

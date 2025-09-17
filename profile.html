@@ -213,7 +213,7 @@ function encodeEmail(email) {
     if (user) {
       loadUser(user);
     } else {
-      window.location.href = "login.html";
+      window.location.href = "login";
     }
   });
 })();
@@ -299,9 +299,10 @@ window.saveProfile = async function() {
 // ===== Logout =====
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "login.html";
+  window.location.href = "login";
 });
 </script>
 </body>
 </html>
+
 

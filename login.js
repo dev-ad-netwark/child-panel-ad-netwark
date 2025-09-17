@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       await set(ref(db, `child_panel/${userId}`), userData);
       alert("🎉 Account created successfully!");
-      window.location.href = "dashboard.html";
+      window.location.href = "dashboard";
     } catch(err) {
       console.error("❌ Create Error:", err);
       alert("Error: " + err.message);
@@ -133,3 +133,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   });
 });
+

@@ -95,10 +95,10 @@ th { background:#e6e6e6; color:#333; font-weight:600; }
 <!-- Main Content -->
 <div class="main-content" id="mainContent">
   <div class="summary">
-    <div class="card"><h3>Daily Income</h3><p id="dailyIncome">₹0</p></div>
-    <div class="card"><h3>Total Earnings</h3><p id="totalEarnings">₹0</p></div>
-    <div class="card"><h3>Total Withdrawal</h3><p id="totalWithdrawal">₹0</p></div>
-    <div class="card"><h3>Total Available</h3><p id="totalAvailable">₹0</p></div>
+    <div class="card"><h3>Daily Income</h3><p id="dailyIncome">$0</p></div>
+    <div class="card"><h3>Total Earnings</h3><p id="totalEarnings">$0</p></div>
+    <div class="card"><h3>Total Withdrawal</h3><p id="totalWithdrawal">$0</p></div>
+    <div class="card"><h3>Total Available</h3><p id="totalAvailable">$0</p></div>
   </div>
 
   <div class="filters">
@@ -110,7 +110,7 @@ th { background:#e6e6e6; color:#333; font-weight:600; }
   <div class="table-container">
     <table>
       <thead>
-        <tr><th>Date</th><th>Impressions</th><th>Earnings</th><th>CPM</th></tr>
+        <tr><th>Date</th><th>Impressions</th><th>Earnings ($)</th><th>CPM ($)</th></tr>
       </thead>
       <tbody id="dataTable"></tbody>
     </table>
@@ -168,7 +168,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     tbody.innerHTML='';
     rows.forEach(r=>{
       const tr=document.createElement('tr');
-      tr.innerHTML=`<td>${r.date}</td><td>${r.impressions||0}</td><td>₹${r.earnings||0}</td><td>₹${r.cpm||0}</td>`;
+      tr.innerHTML=`<td>${r.date}</td><td>${r.impressions||0}</td><td>$${r.earnings||0}</td><td>$${r.cpm||0}</td>`;
       tbody.appendChild(tr);
     });
     renderPagination();
@@ -201,10 +201,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(snapshot.exists()){
       const userData=snapshot.val();
       const summary=userData.dashboard.summary;
-      document.getElementById('dailyIncome').innerText=`₹${summary.dailyIncome||0}`;
-      document.getElementById('totalEarnings').innerText=`₹${summary.totalEarnings||0}`;
-      document.getElementById('totalWithdrawal').innerText=`₹${summary.totalWithdrawal||0}`;
-      document.getElementById('totalAvailable').innerText=`₹${summary.totalAvailable||0}`;
+      document.getElementById('dailyIncome').innerText=`$${summary.dailyIncome||0}`;
+      document.getElementById('totalEarnings').innerText=`$${summary.totalEarnings||0}`;
+      document.getElementById('totalWithdrawal').innerText=`$${summary.totalWithdrawal||0}`;
+      document.getElementById('totalAvailable').innerText=`$${summary.totalAvailable||0}`;
       const dailyStats=userData.dashboard.dailyStats;
       window.fullData=Object.keys(dailyStats).map(d=>({date:d,...dailyStats[d]}));
       window.fullData.sort((a,b)=> new Date(b.date)-new Date(a.date));

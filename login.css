@@ -41,7 +41,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 80vh;
+  min-height: 20vh;
 }
 
 .form-container {
@@ -126,3 +126,4 @@ footer ul li a {
 footer ul li a:hover {
   color: #ffb400;
 }
+

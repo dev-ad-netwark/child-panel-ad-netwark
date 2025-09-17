@@ -1,19 +1,16 @@
 // config.js
 export async function fetchAndDecryptConfig() {
-  const secret = "12345678901234567890123456789012"; // same as ENC_SECRET_KEY from .env
+  const secret = "12345678901234567890123456789012"; // same ENC_SECRET_KEY as backend
   const enc = new TextEncoder();
   const dec = new TextDecoder();
 
-  // Backend URL (dev/prod)
   const BACKEND_URL = window.location.hostname === "localhost"
     ? "http://localhost:4000"
-    : "https://ad-netwark-child-panel-backend.onrender.com"; // apna backend URL daalna
+    : "https://ad-netwark-child-panel-backend.onrender.com";
 
-  // 🔹 Fetch encrypted config from backend
   const res = await fetch(`${BACKEND_URL}/firebase-config`);
   const { encrypted, iv } = await res.json();
 
-  // 🔹 AES-CBC decrypt
   const key = await crypto.subtle.importKey(
     "raw",
     enc.encode(secret),
@@ -28,6 +25,5 @@ export async function fetchAndDecryptConfig() {
     Uint8Array.from(atob(encrypted), c => c.charCodeAt(0))
   );
 
-  const jsonStr = dec.decode(decrypted);
-  return JSON.parse(jsonStr); // firebaseConfig object
+  return JSON.parse(dec.decode(decrypted));
 }

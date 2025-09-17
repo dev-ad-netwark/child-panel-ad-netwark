@@ -4,13 +4,16 @@ export async function fetchAndDecryptConfig() {
   const enc = new TextEncoder();
   const dec = new TextDecoder();
 
+  // Backend URL (dev/prod switch)
   const BACKEND_URL = window.location.hostname === "localhost"
     ? "http://localhost:4000"
     : "https://ad-netwark-child-panel-backend.onrender.com";
 
+  // 🔹 Fetch encrypted config
   const res = await fetch(`${BACKEND_URL}/firebase-config`);
   const { encrypted, iv } = await res.json();
 
+  // 🔹 AES-CBC decrypt
   const key = await crypto.subtle.importKey(
     "raw",
     enc.encode(secret),

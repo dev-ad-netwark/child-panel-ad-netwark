@@ -1,18 +1,14 @@
 {
-  "version": 2,
-  "builds": [
-    { "src": "*.html", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/dashboard", "dest": "/dashboard.html" },
-    { "src": "/support", "dest": "/support.html" },
-    { "src": "/settings", "dest": "/settings.html" },
-    { "src": "/profile", "dest": "/profile.html" },
-    { "src": "/withdrawal", "dest": "/withdrawal.html" },
-    { "src": "/links", "dest": "/links.html" },
-    { "src": "/notifications", "dest": "/notifications.html" },
-    { "src": "/announcements", "dest": "/announcements.html" },
-    { "src": "/login", "dest": "/login.html" },
-    { "src": "/", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/links", "destination": "/links.html" },
+    { "source": "/withdrawal", "destination": "/withdrawal.html" },
+    { "source": "/support", "destination": "/support.html" },
+    { "source": "/announcements", "destination": "/announcements.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/settings", "destination": "/settings.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/notifications", "destination": "/notifications.html" }
   ]
 }

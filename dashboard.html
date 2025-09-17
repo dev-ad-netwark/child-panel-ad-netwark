@@ -6,6 +6,7 @@
 <title>💎 Premium Dashboard — 90 Days Earnings</title>
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* === Same CSS as before === */
 body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0; padding:0;}
 .navbar { background:linear-gradient(90deg,#c9c9c9,#e6e6e6); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.25); position:sticky; top:0; z-index:100; }
 .navbar h1 { margin:0; font-size:1.5rem; font-weight:700; color:#333; letter-spacing:1px; }
@@ -71,11 +72,10 @@ th { background:#e6e6e6; color:#333; font-weight:600; }
 <div class="navbar">
   <h1>💎 Premium Dashboard</h1>
   <div class="nav-right">
-      <a href="notifications.html" class="bell" title="Notifications">&#128276;</a>
+      <span class="bell" title="Notifications" onclick="toggleNotifications()">&#128276;</span>
       <div class="hamburger" id="hamburger">&#9776;</div>
   </div>
 </div>
-
 
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
@@ -86,7 +86,7 @@ th { background:#e6e6e6; color:#333; font-weight:600; }
     <a href="announcements.html">📢 Announcements</a>
     <a href="profile.html">👤 Profile</a>
     <a href="settings.html">⚙️ Settings</a>
-    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+    <a href="#" id="logoutBtn" style="color:#b30000;">🚪 Logout</a>
 </div>
 
 <!-- Overlay -->
@@ -131,135 +131,103 @@ th { background:#e6e6e6; color:#333; font-weight:600; }
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-import { firebaseConfig } from "./config.js";
+import { fetchAndDecryptConfig } from "./config.js";
 
-// Firebase Init
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+document.addEventListener("DOMContentLoaded", async () => {
+  const firebaseConfig = await fetchAndDecryptConfig();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
 
-// ===== Sidebar toggle =====
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-const hamburger = document.getElementById('hamburger');
+  // Sidebar toggle
+  const sidebar=document.getElementById('sidebar');
+  const overlay=document.getElementById('overlay');
+  document.getElementById('hamburger').addEventListener('click',()=>{sidebar.classList.toggle('show');overlay.classList.toggle('active');});
+  overlay.addEventListener('click',()=>{sidebar.classList.remove('show');overlay.classList.remove('active');});
 
-function toggleSidebar(){
-    sidebar.classList.toggle('show');
-    overlay.classList.toggle('active');
-}
-
-hamburger.addEventListener('click', toggleSidebar);
-overlay.addEventListener('click', toggleSidebar);
-
-// ===== Notifications =====
-function toggleNotifications(){ 
-    document.getElementById('notificationsPanel').classList.toggle('show'); 
-}
-function renderNotifications(notifications){
-    const container = document.getElementById('notificationsList');
+  // Notifications
+  window.toggleNotifications=()=>{document.getElementById('notificationsPanel').classList.toggle('show');};
+  function renderNotifications(notifications){
+    const container=document.getElementById('notificationsList');
     container.innerHTML='';
     notifications.forEach(n=>{
-        const div = document.createElement('div');
-        div.className = 'notification-item'+(n.read===false?' unread':'');
-        div.innerText = n.title ? `${n.title}: ${n.message}` : n.message;
-        div.onclick = ()=>{ n.read=true; div.classList.remove('unread'); };
-        container.appendChild(div);
+      const div=document.createElement('div');
+      div.className='notification-item'+(n.read===false?' unread':'');
+      div.innerText=n.title?`${n.title}: ${n.message}`:n.message;
+      div.onclick=()=>{n.read=true;div.classList.remove('unread');};
+      container.appendChild(div);
     });
-}
+  }
 
-// ===== Table & Pagination =====
-window.rowsPerPage = 10;
-window.currentPage = 1;
-window.filteredData = [];
-
-function renderTable(page){
-    const start = (page-1)*window.rowsPerPage;
-    const end = start+window.rowsPerPage;
-    const rows = window.filteredData.slice(start,end);
-    const tbody = document.getElementById('dataTable');
+  // Table + pagination
+  window.rowsPerPage=10; window.currentPage=1; window.filteredData=[];
+  function renderTable(page){
+    const start=(page-1)*window.rowsPerPage, end=start+window.rowsPerPage;
+    const rows=window.filteredData.slice(start,end);
+    const tbody=document.getElementById('dataTable');
     tbody.innerHTML='';
     rows.forEach(r=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${r.date}</td><td>${r.impressions||0}</td><td>₹${r.earnings||0}</td><td>₹${r.cpm||0}</td>`;
-        tbody.appendChild(tr);
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${r.date}</td><td>${r.impressions||0}</td><td>₹${r.earnings||0}</td><td>₹${r.cpm||0}</td>`;
+      tbody.appendChild(tr);
     });
     renderPagination();
-}
-
-function renderPagination(){
-    const totalPages = Math.ceil(window.filteredData.length/window.rowsPerPage);
-    const container = document.getElementById('pagination');
-    container.innerHTML='';
+  }
+  function renderPagination(){
+    const totalPages=Math.ceil(window.filteredData.length/window.rowsPerPage);
+    const container=document.getElementById('pagination'); container.innerHTML='';
     for(let i=1;i<=totalPages;i++){
-        const btn = document.createElement('button');
-        btn.className = 'page-btn'+(i===window.currentPage?' active':'');
-        btn.innerText = i;
-        btn.onclick = ()=>{ window.currentPage=i; renderTable(i); };
-        container.appendChild(btn);
+      const btn=document.createElement('button');
+      btn.className='page-btn'+(i===window.currentPage?' active':''); btn.innerText=i;
+      btn.onclick=()=>{window.currentPage=i; renderTable(i);};
+      container.appendChild(btn);
     }
-}
-
-// ===== Filter =====
-function applyFilter(){
-    const from = document.getElementById('fromDate').value;
-    const to = document.getElementById('toDate').value;
-    window.filteredData = window.fullData.filter(d=>{
-        if(from && d.date<from) return false;
-        if(to && d.date>to) return false;
-        return true;
+  }
+  window.applyFilter=()=>{
+    const from=document.getElementById('fromDate').value;
+    const to=document.getElementById('toDate').value;
+    window.filteredData=window.fullData.filter(d=>{
+      if(from && d.date<from) return false;
+      if(to && d.date>to) return false;
+      return true;
     });
-    window.currentPage=1;
-    renderTable(1);
-}
+    window.currentPage=1; renderTable(1);
+  };
 
-// ===== Fetch Dashboard =====
-async function fetchDashboardData(userId){
-    try{
-        const userRef = ref(db, `child_panel/${userId}`);
-        const snapshot = await get(userRef);
-        if(snapshot.exists()){
-            const userData = snapshot.val();
-
-            const summary = userData.dashboard.summary;
-            document.getElementById('dailyIncome').innerText = `₹${summary.dailyIncome||0}`;
-            document.getElementById('totalEarnings').innerText = `₹${summary.totalEarnings||0}`;
-            document.getElementById('totalWithdrawal').innerText = `₹${summary.totalWithdrawal||0}`;
-            document.getElementById('totalAvailable').innerText = `₹${summary.totalAvailable||0}`;
-
-            const dailyStats = userData.dashboard.dailyStats;
-            window.fullData = Object.keys(dailyStats).map(d=>({ date:d, ...dailyStats[d] }));
-            window.fullData.sort((a,b)=> new Date(b.date)-new Date(a.date));
-            window.filteredData = [...window.fullData];
-            renderTable(1);
-
-            const notificationsArr = Object.values(userData.notifications || {});
-            renderNotifications(notificationsArr);
-        }
-    }catch(err){
-        console.error(err);
-        alert("Failed to fetch dashboard data.");
+  // Fetch dashboard data
+  async function fetchDashboardData(userId){
+    const userRef=ref(db,`child_panel/${userId}`);
+    const snapshot=await get(userRef);
+    if(snapshot.exists()){
+      const userData=snapshot.val();
+      const summary=userData.dashboard.summary;
+      document.getElementById('dailyIncome').innerText=`₹${summary.dailyIncome||0}`;
+      document.getElementById('totalEarnings').innerText=`₹${summary.totalEarnings||0}`;
+      document.getElementById('totalWithdrawal').innerText=`₹${summary.totalWithdrawal||0}`;
+      document.getElementById('totalAvailable').innerText=`₹${summary.totalAvailable||0}`;
+      const dailyStats=userData.dashboard.dailyStats;
+      window.fullData=Object.keys(dailyStats).map(d=>({date:d,...dailyStats[d]}));
+      window.fullData.sort((a,b)=> new Date(b.date)-new Date(a.date));
+      window.filteredData=[...window.fullData];
+      renderTable(1);
+      renderNotifications(Object.values(userData.notifications||{}));
     }
-}
+  }
 
-// ===== Auth Check =====
-onAuthStateChanged(auth, user=>{
+  // Auth check
+  onAuthStateChanged(auth,user=>{
     if(user){
-        const userId = user.email.replace(/\./g,'_');
-        fetchDashboardData(userId);
+      const userId=user.email.replace(/\./g,'_');
+      fetchDashboardData(userId);
     }else{
-        window.location.href = "login.html";
+      window.location.href="login.html";
     }
-});
+  });
 
-// ===== Logout =====
-document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-    try{
-        await signOut(auth);
-        window.location.href="login.html";
-    }catch(err){
-        console.error(err);
-        alert("Logout failed.");
-    }
+  // Logout
+  document.getElementById('logoutBtn').addEventListener('click',async()=>{
+    try{await signOut(auth); window.location.href="login.html";}catch(err){alert("Logout failed");}
+  });
 });
 </script>
 </body>

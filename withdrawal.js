@@ -15,7 +15,7 @@ let auth, db;
   // Auth check & load withdrawals
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      window.location.href = "login.html";
+      window.location.href = "login";
       return;
     }
     const encodedEmail = encodeEmail(user.email);
@@ -202,7 +202,7 @@ async function submitBank() {
 // ===== Logout =====
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await signOut(auth);
-  window.location.href = "login.html";
+  window.location.href = "login";
 });
 
 // ===== Sidebar =====
@@ -260,3 +260,4 @@ window.openBankModal = openBankModal;
 window.closeModal = closeModal;
 window.submitCrypto = submitCrypto;
 window.submitBank = submitBank;
+

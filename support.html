@@ -167,7 +167,7 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 import { fetchAndDecryptConfig } from "./config.js";
 
-let auth, db, encodedEmail = null;
+let auth, db;
 
 // ===== Init =====
 (async () => {
@@ -179,8 +179,7 @@ let auth, db, encodedEmail = null;
   // Auth check
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      encodedEmail = user.email.replace(/\./g, "_");
-      loadTickets();
+      loadTickets(user.email.replace(/\./g, "_"));
     } else {
       window.location.href = "login.html";
     }
@@ -214,19 +213,23 @@ document.getElementById("supportForm").addEventListener("submit", async (e) => {
 
   if (!subject || !message) return alert("⚠️ Fill all fields!");
 
+  const user = auth.currentUser;
+  if (!user) return alert("⚠️ You must be logged in!");
+
+  const emailKey = user.email.replace(/\./g, "_");
+  const ticketId = "ticket_" + Date.now();
+  const ticketData = {
+    subject,
+    message,
+    status: "sent",
+    seen: false,
+    date: new Date().toLocaleString(),
+    answer: ""
+  };
+
   try {
-    const ticketId = "ticket_" + Date.now();
-    const ticketData = {
-      subject,
-      message,
-      status: "sent",
-      seen: false,
-      date: new Date().toLocaleString(),
-      answer: ""
-    };
-
-    await set(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), ticketData);
-
+    await set(ref(db, `child_panel/${emailKey}/support/${ticketId}`), ticketData);
+    console.log("✅ Ticket saved:", ticketData);
     alert("✅ Ticket submitted!");
     document.getElementById("supportForm").reset();
   } catch (err) {
@@ -236,8 +239,8 @@ document.getElementById("supportForm").addEventListener("submit", async (e) => {
 });
 
 // ===== Load Tickets =====
-function loadTickets() {
-  const ticketsRef = ref(db, `child_panel/${encodedEmail}/support`);
+function loadTickets(emailKey) {
+  const ticketsRef = ref(db, `child_panel/${emailKey}/support`);
   onValue(ticketsRef, (snap) => {
     const data = snap.val() || {};
     const list = document.getElementById("ticketsList");
@@ -258,14 +261,14 @@ function loadTickets() {
           <span><b>${val.subject}</b> <br><small>${val.date}</small></span>
           <span class="ticket-status ${statusClass}">${val.status}</span>
         `;
-        div.onclick = () => openModal(id, val);
+        div.onclick = () => openModal(emailKey, id, val);
         list.appendChild(div);
       });
   });
 }
 
 // ===== Modal =====
-window.openModal = (ticketId, ticket) => {
+window.openModal = (emailKey, ticketId, ticket) => {
   document.getElementById("modalSubject").innerText = ticket.subject;
   document.getElementById("modalMessage").innerText = ticket.message;
   document.getElementById("modalDate").innerText = ticket.date;
@@ -274,7 +277,7 @@ window.openModal = (ticketId, ticket) => {
   const answerBox = document.getElementById("modalAnswer");
   if (ticket.answer && ticket.answer.trim() !== "") {
     answerBox.innerHTML = `<b>Support Answer:</b><br>${ticket.answer}`;
-    update(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), { seen: true });
+    update(ref(db, `child_panel/${emailKey}/support/${ticketId}`), { seen: true });
   } else {
     answerBox.innerHTML = `<i>⏳ Awaiting reply from support...</i>`;
   }

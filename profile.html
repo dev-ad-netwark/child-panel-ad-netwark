@@ -31,7 +31,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     position:fixed; top:0; left:-100%; width:260px; height:100%;
     background:linear-gradient(180deg,#dcdcdc,#f5f5f5);
     padding:25px 20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.2); transition:0.3s;
+    box-shadow:2px 0 8px rgba(0,0,0,0.2); transition:0.3s;
     z-index:300;
 }
 .sidebar a {
@@ -120,11 +120,6 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 }
 .notification-item.unread { font-weight:600; background:#d9d9d9; border-left:4px solid #999; }
 .notification-item:hover { background:#ccc; }
-
-/* ===== Responsive ===== */
-@media(max-width:992px){
-    #notificationsPanel { width:260px; }
-}
 </style>
 </head>
 <body>
@@ -147,7 +142,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     <a href="announcements.html">📢 Announcements</a>
     <a href="profile.html">👤 Profile</a>
     <a href="settings.html">⚙️ Settings</a>
-    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+    <a href="#" id="logoutBtn" style="color:#b30000;">🚪 Logout</a>
 </div>
 
 <!-- Overlay -->
@@ -155,8 +150,6 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 
 <!-- Main Content -->
 <div class="main-content">
-
-  <!-- Profile Card -->
   <div class="profile-card">
     <img src="https://i.ibb.co/9n0v5vL/default-profile.png" alt="Profile Picture" id="profilePic">
     <h2 id="username">User Name</h2>
@@ -176,14 +169,13 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     <input type="text" id="editUsername">
     
     <label for="editEmail">Email</label>
-    <input type="email" id="editEmail" disabled> <!-- Email change disable -->
+    <input type="email" id="editEmail" disabled>
     
     <label for="editPassword">Password</label>
     <input type="password" id="editPassword" placeholder="Enter new password">
 
     <button onclick="saveProfile()">💾 Save Profile</button>
   </div>
-
 </div>
 
 <!-- Notifications Panel -->
@@ -200,121 +192,115 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged, updatePassword } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-import { firebaseConfig } from './config.js';
+import { fetchAndDecryptConfig } from './config.js';
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-// Default Profile Image (for all users)
-const defaultProfilePic = "https://s44783.pcdn.co/wp-content/uploads/2023/10/2-1024x536.png";
+let auth, db;
+const defaultProfilePic = "https://i.ibb.co/9n0v5vL/default-profile.png";
 
 // Encode email for Firebase key
 function encodeEmail(email) {
   return email.replace(/\./g, "_");
 }
 
-// ================= Sidebar toggle =================
-window.toggleSidebar = function(){
-    document.getElementById('sidebar').classList.toggle('show');
-    document.getElementById('overlay').classList.toggle('active');
-}
-window.closeSidebar = function(){
-    document.getElementById('sidebar').classList.remove('show');
-    document.getElementById('overlay').classList.remove('active');
-}
+// ===== Init =====
+(async () => {
+  const firebaseConfig = await fetchAndDecryptConfig();
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
 
-// ================= Notifications =================
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      loadUser(user);
+    } else {
+      window.location.href = "login.html";
+    }
+  });
+})();
+
+// ===== Sidebar =====
+window.toggleSidebar = () => {
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('overlay').classList.toggle('active');
+};
+window.closeSidebar = () => {
+  document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('overlay').classList.remove('active');
+};
+
+// ===== Notifications =====
 const notifications = [];
-for(let i=1;i<=5;i++){
-    notifications.push({id:i, text:`🔔 Notification ${i} for Profile`, unread:Math.random()>0.5});
+for (let i = 1; i <= 5; i++) {
+  notifications.push({ id: i, text: `🔔 Notification ${i} for Profile`, unread: Math.random() > 0.5 });
 }
-window.toggleNotifications = function(){
-    document.getElementById('notificationsPanel').classList.toggle('show');
+window.toggleNotifications = () => {
+  document.getElementById('notificationsPanel').classList.toggle('show');
+};
+function renderNotifications() {
+  const container = document.getElementById('notificationsList');
+  container.innerHTML = "";
+  notifications.forEach(n => {
+    const div = document.createElement("div");
+    div.className = "notification-item" + (n.unread ? " unread" : "");
+    div.innerText = n.text;
+    div.onclick = () => { n.unread = false; div.classList.remove("unread"); };
+    container.appendChild(div);
+  });
 }
-function renderNotifications(){
-    const container=document.getElementById('notificationsList');
-    container.innerHTML="";
-    notifications.forEach(n=>{
-        const div=document.createElement("div");
-        div.className="notification-item"+(n.unread?" unread":"");
-        div.innerText=n.text;
-        div.onclick=()=>{n.unread=false; div.classList.remove("unread");};
-        container.appendChild(div);
-    });
-}
-
-// ================= Load User Data =================
-async function loadUser(user){
-    const userId = encodeEmail(user.email);
-    const snapshot = await get(ref(db, `child_panel/${userId}`));
-    if(snapshot.exists()){
-        const data = snapshot.val();
-        document.getElementById("username").innerText = data.name || "No Name";
-        document.getElementById("email").innerText = user.email;
-        document.getElementById("editUsername").value = data.name || "";
-        document.getElementById("editEmail").value = user.email;
-
-        // Profile Pic (default for all)
-        document.getElementById("profilePic").src = data.photoURL || defaultProfilePic;
-    } else {
-        document.getElementById("profilePic").src = defaultProfilePic;
-    }
-}
-
-// ================= Save Profile =================
-window.saveProfile = async function(){
-    const user = auth.currentUser;
-    if(!user) return;
-
-    const newName = document.getElementById('editUsername').value;
-    const newPassword = document.getElementById('editPassword').value;
-    const userId = encodeEmail(user.email);
-
-    try {
-        // Update DB
-        await update(ref(db, `child_panel/${userId}`), { 
-            name: newName, 
-            photoURL: defaultProfilePic // always save default image
-        });
-
-        // Update Password if entered
-        if(newPassword.trim() !== ""){
-            await updatePassword(user, newPassword);
-            alert("✅ Profile & Password updated successfully!");
-        } else {
-            alert("✅ Profile updated successfully!");
-        }
-
-        document.getElementById("username").innerText = newName;
-        document.getElementById("editPassword").value = "";
-        document.getElementById("profilePic").src = defaultProfilePic;
-
-    } catch(err){
-        console.error(err);
-        alert("Error updating profile: " + err.message);
-    }
-}
-
-// ================= Logout =================
-window.logout = async function(){
-    await signOut(auth);
-    window.location.href="login.html";
-}
-
-// ================= Auth State =================
-onAuthStateChanged(auth, (user) => {
-    if(user){
-        loadUser(user);
-    } else {
-        window.location.href="login.html";
-    }
-});
-
-// ================= Init =================
 renderNotifications();
 
+// ===== Load User Data =====
+async function loadUser(user) {
+  const userId = encodeEmail(user.email);
+  const snapshot = await get(ref(db, `child_panel/${userId}`));
+  if (snapshot.exists()) {
+    const data = snapshot.val();
+    document.getElementById("username").innerText = data.name || "No Name";
+    document.getElementById("email").innerText = user.email;
+    document.getElementById("editUsername").value = data.name || "";
+    document.getElementById("editEmail").value = user.email;
+    document.getElementById("profilePic").src = data.photoURL || defaultProfilePic;
+  } else {
+    document.getElementById("profilePic").src = defaultProfilePic;
+  }
+}
+
+// ===== Save Profile =====
+window.saveProfile = async function() {
+  const user = auth.currentUser;
+  if (!user) return;
+
+  const newName = document.getElementById('editUsername').value;
+  const newPassword = document.getElementById('editPassword').value;
+  const userId = encodeEmail(user.email);
+
+  try {
+    await update(ref(db, `child_panel/${userId}`), {
+      name: newName,
+      photoURL: defaultProfilePic
+    });
+
+    if (newPassword.trim() !== "") {
+      await updatePassword(user, newPassword);
+      alert("✅ Profile & Password updated!");
+    } else {
+      alert("✅ Profile updated!");
+    }
+
+    document.getElementById("username").innerText = newName;
+    document.getElementById("editPassword").value = "";
+    document.getElementById("profilePic").src = defaultProfilePic;
+  } catch (err) {
+    console.error(err);
+    alert("❌ Error updating profile: " + err.message);
+  }
+};
+
+// ===== Logout =====
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+});
 </script>
 </body>
 </html>

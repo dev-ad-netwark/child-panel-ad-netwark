@@ -9,117 +9,51 @@
 body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0; padding:0; }
 
 /* ===== Navbar ===== */
-.navbar {
-    background:linear-gradient(90deg,#c9c9c9,#e6e6e6);
-    padding:12px 20px;
-    display:flex; justify-content:space-between; align-items:center;
-    box-shadow:0 2px 8px rgba(0,0,0,0.25);
-    position:sticky; top:0; z-index:100;
-}
+.navbar { background:linear-gradient(90deg,#c9c9c9,#e6e6e6); padding:12px 20px; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.25); position:sticky; top:0; z-index:100; }
 .navbar h1 { margin:0; font-size:1.5rem; font-weight:700; color:#333; }
 .navbar .nav-right { display:flex; align-items:center; gap:20px; }
 .navbar .bell { font-size:1.5rem; cursor:pointer; position:relative; color:#444; }
-.navbar .bell::after {
-    content:''; width:8px; height:8px; background:red; border-radius:50%;
-    position:absolute; top:2px; right:2px;
-}
+.navbar .bell::after { content:''; width:8px; height:8px; background:red; border-radius:50%; position:absolute; top:2px; right:2px; }
 .navbar .hamburger { font-size:1.8rem; cursor:pointer; color:#333; display:block; }
 
 /* ===== Sidebar ===== */
-.sidebar {
-    position:fixed; top:0; left:-100%; width:260px; height:100%;
-    background:linear-gradient(180deg,#dcdcdc,#f5f5f5);
-    padding:25px 20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto;
-    box-shadow: 2px 0 8px rgba(0,0,0,0.2); transition:0.3s;
-    z-index:300;
-}
-.sidebar a {
-    text-decoration:none; color:#222; font-weight:500; padding:12px 14px;
-    border-radius:8px; transition:0.3s;
-}
+.sidebar { position:fixed; top:0; left:-100%; width:260px; height:100%; background:linear-gradient(180deg,#dcdcdc,#f5f5f5); padding:25px 20px; display:flex; flex-direction:column; gap:15px; overflow-y:auto; box-shadow:2px 0 8px rgba(0,0,0,0.2); transition:0.3s; z-index:300; }
+.sidebar a { text-decoration:none; color:#222; font-weight:500; padding:12px 14px; border-radius:8px; transition:0.3s; }
 .sidebar a:hover { background:#999; color:#fff; }
 .sidebar.show { left:0; }
 
 /* ===== Overlay ===== */
-.overlay {
-    position:fixed; top:0; left:0; width:100%; height:100%;
-    background:rgba(0,0,0,0.45);
-    z-index:200;
-    display:none;
-}
+.overlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); z-index:200; display:none; }
 .overlay.active { display:block; }
 
 /* ===== Main Content ===== */
 .main-content { padding:20px; transition:0.3s; max-width:600px; margin:auto; }
 
 /* ===== Settings Card ===== */
-.settings-card {
-    background:linear-gradient(135deg,#e8e8e8,#cfcfcf);
-    padding:25px; border-radius:14px;
-    box-shadow:0 4px 14px rgba(0,0,0,0.2);
-    margin-bottom:20px;
-}
+.settings-card { background:linear-gradient(135deg,#e8e8e8,#cfcfcf); padding:25px; border-radius:14px; box-shadow:0 4px 14px rgba(0,0,0,0.2); margin-bottom:20px; }
 .settings-card h2 { margin-top:0; font-size:1.3rem; color:#333; }
 .settings-card label { display:block; margin:10px 0 5px; font-weight:500; }
-.settings-card input, .settings-card select, .settings-card button {
-    width:100%; padding:10px 12px; border-radius:8px; border:1px solid #ccc; font-size:1rem; margin-bottom:10px;
-}
-.settings-card button {
-    background:#999; color:#fff; border:none; font-weight:600; cursor:pointer; transition:0.3s;
-}
+.settings-card input, .settings-card select, .settings-card button { width:100%; padding:10px 12px; border-radius:8px; border:1px solid #ccc; font-size:1rem; margin-bottom:10px; }
+.settings-card button { background:#999; color:#fff; border:none; font-weight:600; cursor:pointer; transition:0.3s; }
 .settings-card button:hover { background:#777; }
 
 /* ===== Notifications Panel ===== */
-#notificationsPanel {
-    position:fixed;
-    top:0;
-    right:-350px;
-    width:300px; height:100%;
-    background:#f5f5f5;
-    box-shadow:-2px 0 10px rgba(0,0,0,0.3);
-    padding:20px;
-    transition:0.3s;
-    overflow-y:auto;
-    z-index:400;
-}
+#notificationsPanel { position:fixed; top:0; right:-350px; width:300px; height:100%; background:#f5f5f5; box-shadow:-2px 0 10px rgba(0,0,0,0.3); padding:20px; transition:0.3s; overflow-y:auto; z-index:400; }
 #notificationsPanel.show { right:0; }
-#notificationsPanel h2 {
-    margin:0 0 15px 0; font-size:1.3rem; color:#333;
-    display:flex; align-items:center; justify-content:space-between;
-}
-#notificationsPanel .back-btn {
-    font-size:1rem; cursor:pointer; color:#333; background:none; border:none;
-}
-.notification-item {
-    padding:12px; border-radius:10px;
-    margin-bottom:12px; background:#e6e6e6;
-    cursor:pointer; transition:0.3s;
-}
+#notificationsPanel h2 { margin:0 0 15px 0; font-size:1.3rem; color:#333; display:flex; align-items:center; justify-content:space-between; }
+#notificationsPanel .back-btn { font-size:1rem; cursor:pointer; color:#333; background:none; border:none; }
+.notification-item { padding:12px; border-radius:10px; margin-bottom:12px; background:#e6e6e6; cursor:pointer; transition:0.3s; }
 .notification-item.unread { font-weight:600; background:#d9d9d9; border-left:4px solid #999; }
 .notification-item:hover { background:#ccc; }
 
 /* ===== Toast ===== */
-#toast {
-    position:fixed;
-    bottom:30px;
-    left:50%;
-    transform:translateX(-50%);
-    background:#333; color:#fff;
-    padding:12px 20px;
-    border-radius:10px;
-    opacity:0; transition:0.5s;
-    z-index:500;
-}
+#toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%); background:#333; color:#fff; padding:12px 20px; border-radius:10px; opacity:0; transition:0.5s; z-index:500; }
 
 /* ===== Profile Picture ===== */
-.profile-pic {
-    width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid #999;
-}
+.profile-pic { width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:15px; border:2px solid #999; }
 
 /* ===== Responsive ===== */
-@media(max-width:992px){
-    #notificationsPanel { width:260px; }
-}
+@media(max-width:992px){ #notificationsPanel { width:260px; } }
 </style>
 </head>
 <body>
@@ -142,7 +76,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     <a href="announcements.html">📢 Announcements</a>
     <a href="profile.html">👤 Profile</a>
     <a href="settings.html">⚙️ Settings</a>
-    <a href="#" onclick="logout()" style="color:#b30000;">🚪 Logout</a>
+    <a href="#" id="logoutBtn" style="color:#b30000;">🚪 Logout</a>
 </div>
 
 <!-- Overlay -->
@@ -150,7 +84,6 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 
 <!-- Main Content -->
 <div class="main-content">
-
   <div class="settings-card">
     <h2>Profile Settings</h2>
     <img src="" alt="Profile Picture" class="profile-pic" id="profilePic">
@@ -168,28 +101,17 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
       <option value="dark">🌙 Dark</option>
     </select>
 
-    <label>
-      <input type="checkbox" id="notifications" checked>
-      Enable Notifications
-    </label>
-
-    <label>
-      <input type="checkbox" id="twofa">
-      Enable Two-Factor Authentication (2FA)
-    </label>
+    <label><input type="checkbox" id="notifications" checked> Enable Notifications</label>
+    <label><input type="checkbox" id="twofa"> Enable Two-Factor Authentication (2FA)</label>
 
     <button onclick="saveSettings()">💾 Save Changes</button>
     <button style="background:#b30000; margin-top:5px;" onclick="resetSettings()">♻️ Reset Settings</button>
   </div>
-
 </div>
 
 <!-- Notifications Panel -->
 <div id="notificationsPanel">
-  <h2>
-    Notifications
-    <button class="back-btn" onclick="toggleNotifications()">← Back</button>
-  </h2>
+  <h2>Notifications <button class="back-btn" onclick="toggleNotifications()">← Back</button></h2>
   <div id="notificationsList"></div>
 </div>
 
@@ -201,132 +123,136 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
 import { getAuth, signOut, updateEmail, updatePassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-import { firebaseConfig } from './config.js';
+import { fetchAndDecryptConfig } from './config.js';
 
-// Init
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-// ===== Global Default Profile Image =====
-const DEFAULT_PROFILE = "https://via.placeholder.com/80?text=DOMI";
+let auth, db;
+const DEFAULT_PROFILE = "https://via.placeholder.com/80?text=USER";
 
 // Encode email for Firebase key
 function encodeEmail(email){ return email.replace(/\./g,"_"); }
 
-// ===== Sidebar toggle =====
-window.toggleSidebar = function(){
-    document.getElementById('sidebar').classList.toggle('show');
-    document.getElementById('overlay').classList.toggle('active');
-}
-window.closeSidebar = function(){
-    document.getElementById('sidebar').classList.remove('show');
-    document.getElementById('overlay').classList.remove('active');
-}
+// ===== Init =====
+(async () => {
+  const firebaseConfig = await fetchAndDecryptConfig();
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.href="login.html"; return; }
+    const userId = encodeEmail(user.email);
+    const snap = await get(ref(db,`child_panel/${userId}/profile`));
+    if (snap.exists()) {
+      const data = snap.val();
+      document.getElementById('email').value = data.email || user.email;
+      document.getElementById('theme').value = data.theme || "light";
+      document.getElementById('notifications').checked = data.notifications ?? true;
+      document.getElementById('twofa').checked = data.twoFA ?? false;
+      document.getElementById('profilePic').src = data.profilePic || DEFAULT_PROFILE;
+    } else {
+      document.getElementById('profilePic').src = DEFAULT_PROFILE;
+    }
+  });
+})();
+
+// ===== Sidebar =====
+window.toggleSidebar = () => {
+  document.getElementById('sidebar').classList.toggle('show');
+  document.getElementById('overlay').classList.toggle('active');
+};
+window.closeSidebar = () => {
+  document.getElementById('sidebar').classList.remove('show');
+  document.getElementById('overlay').classList.remove('active');
+};
 
 // ===== Notifications =====
-const notifications=[];
-for(let i=1;i<=5;i++){ notifications.push({id:i,text:`🔔 Notification ${i}`,unread:Math.random()>0.5}); }
-window.toggleNotifications=function(){
-    document.getElementById('notificationsPanel').classList.toggle('show');
-}
+const notifications = [];
+for (let i=1;i<=5;i++){ notifications.push({id:i,text:`🔔 Notification ${i}`,unread:Math.random()>0.5}); }
+window.toggleNotifications = () => {
+  document.getElementById('notificationsPanel').classList.toggle('show');
+};
 function renderNotifications(){
-    const container=document.getElementById('notificationsList');
-    container.innerHTML="";
-    notifications.forEach(n=>{
-        const div=document.createElement("div");
-        div.className="notification-item"+(n.unread?" unread":"");
-        div.innerText=n.text;
-        div.onclick=()=>{n.unread=false;div.classList.remove("unread");};
-        container.appendChild(div);
-    });
+  const container=document.getElementById('notificationsList');
+  container.innerHTML="";
+  notifications.forEach(n=>{
+    const div=document.createElement("div");
+    div.className="notification-item"+(n.unread?" unread":"");
+    div.innerText=n.text;
+    div.onclick=()=>{n.unread=false;div.classList.remove("unread");};
+    container.appendChild(div);
+  });
 }
 renderNotifications();
 
 // ===== Profile Picture Upload =====
 window.updateProfilePic = function(event){
-    const reader=new FileReader();
-    reader.onload=function(){
-        document.getElementById('profilePic').src=reader.result;
-        localStorage.setItem("profilePic", reader.result);
-    }
-    reader.readAsDataURL(event.target.files[0]);
+  const reader=new FileReader();
+  reader.onload=function(){
+    document.getElementById('profilePic').src=reader.result;
+    localStorage.setItem("profilePic", reader.result);
+  }
+  reader.readAsDataURL(event.target.files[0]);
 }
 
 // ===== Save Settings =====
 window.saveSettings = async function(){
-    const user=auth.currentUser;
-    if(!user){ alert("Not logged in"); return; }
+  const user=auth.currentUser;
+  if(!user){ alert("Not logged in"); return; }
 
-    const email=document.getElementById('email').value.trim();
-    const password=document.getElementById('password').value.trim();
-    const theme=document.getElementById('theme').value;
-    const notif=document.getElementById('notifications').checked;
-    const twofa=document.getElementById('twofa').checked;
-    const pic=document.getElementById('profilePic').src || DEFAULT_PROFILE;
+  const email=document.getElementById('email').value.trim();
+  const password=document.getElementById('password').value.trim();
+  const theme=document.getElementById('theme').value;
+  const notif=document.getElementById('notifications').checked;
+  const twofa=document.getElementById('twofa').checked;
+  const pic=document.getElementById('profilePic').src || DEFAULT_PROFILE;
 
-    const userId=encodeEmail(user.email);
+  const userId=encodeEmail(user.email);
 
-    try{
-        if(email && email!==user.email){ await updateEmail(user,email); }
-        if(password){ await updatePassword(user,password); }
+  try{
+    if(email && email!==user.email){ await updateEmail(user,email); }
+    if(password){ await updatePassword(user,password); }
 
-        await update(ref(db,`child_panel/${userId}/profile`),{
-            email:user.email,
-            theme:theme,
-            notifications:notif,
-            twoFA:twofa,
-            profilePic:pic,
-            passwordLastChanged:new Date().toISOString()
-        });
+    await update(ref(db,`child_panel/${userId}/profile`),{
+      email:user.email,
+      theme:theme,
+      notifications:notif,
+      twoFA:twofa,
+      profilePic:pic,
+      passwordLastChanged:new Date().toISOString()
+    });
 
-        showToast("✅ Settings updated!");
-    }catch(err){
-        console.error(err);
-        showToast("❌ Error: "+err.message);
-    }
+    showToast("✅ Settings updated!");
+  }catch(err){
+    console.error(err);
+    showToast("❌ Error: "+err.message);
+  }
 }
 
 // ===== Reset Settings =====
 window.resetSettings = function(){
-    document.getElementById('email').value="";
-    document.getElementById('password').value="";
-    document.getElementById('theme').value="light";
-    document.getElementById('notifications').checked=true;
-    document.getElementById('twofa').checked=false;
-    document.getElementById('profilePic').src=DEFAULT_PROFILE;
-    showToast("♻️ Settings reset!");
+  document.getElementById('email').value="";
+  document.getElementById('password').value="";
+  document.getElementById('theme').value="light";
+  document.getElementById('notifications').checked=true;
+  document.getElementById('twofa').checked=false;
+  document.getElementById('profilePic').src=DEFAULT_PROFILE;
+  localStorage.removeItem("profilePic");
+  showToast("♻️ Settings reset!");
 }
 
 // ===== Toast =====
 function showToast(msg){
-    const toast=document.getElementById('toast');
-    toast.innerText=msg;
-    toast.style.opacity="1";
-    setTimeout(()=>{toast.style.opacity="0";},2500);
+  const toast=document.getElementById('toast');
+  toast.innerText=msg;
+  toast.style.opacity="1";
+  setTimeout(()=>{toast.style.opacity="0";},2500);
 }
-
-// ===== Load User =====
-onAuthStateChanged(auth, async (user)=>{
-    if(!user){ window.location.href="login.html"; return; }
-    const userId=encodeEmail(user.email);
-    const snap=await get(ref(db,`child_panel/${userId}/profile`));
-    if(snap.exists()){
-        const data=snap.val();
-        document.getElementById('email').value=data.email||user.email;
-        document.getElementById('theme').value=data.theme||"light";
-        document.getElementById('notifications').checked=data.notifications??true;
-        document.getElementById('twofa').checked=data.twoFA??false;
-        document.getElementById('profilePic').src=data.profilePic||DEFAULT_PROFILE;
-    } else {
-        document.getElementById('profilePic').src=DEFAULT_PROFILE;
-    }
-});
 
 // ===== Logout =====
-window.logout=function(){
-    signOut(auth).then(()=>{ window.location.href="login.html"; });
-}
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href="login.html";
+});
 </script>
 
 </body>

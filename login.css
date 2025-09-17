@@ -1,147 +1,128 @@
-/* Reset some default styles */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #f5f6fa;
+  margin: 0;
+  padding: 0;
+  color: #333;
 }
 
-/* Navbar */
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: #1a1a1a;
-    padding: 1rem 2rem;
-    color: #fff;
+  background: #222;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
 }
 
 .navbar .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+  font-size: 22px;
+  font-weight: bold;
 }
 
-.navbar .nav-links li {
-    display: inline;
-    margin-left: 1.5rem;
+.navbar .nav-links {
+  list-style: none;
+  display: flex;
+  gap: 20px;
 }
 
-.navbar .nav-links a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s;
+.navbar .nav-links li a {
+  color: white;
+  text-decoration: none;
+  transition: 0.3s;
 }
 
-.navbar .nav-links a:hover {
-    color: #00aaff;
+.navbar .nav-links li a:hover {
+  color: #ffb400;
 }
 
 /* Container */
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 70vh;
-    background: linear-gradient(to right, #f0f4f8, #d9e2ec);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
 }
 
-/* Form container */
 .form-container {
-    background: #fff;
-    padding: 3rem 2rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    width: 350px;
-    text-align: center;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  width: 320px;
 }
 
-/* Button group */
 .button-group {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
 }
 
 .button-group button {
-    padding: 0.7rem 2rem;
-    margin: 0 0.5rem;
-    border: none;
-    border-radius: 50px;
-    background: #e0e0e0;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
+  flex: 1;
+  padding: 10px;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
 }
 
 .button-group button.active {
-    background: #00aaff;
-    color: #fff;
+  background: #ffb400;
+  color: white;
 }
 
-.button-group button:hover:not(.active) {
-    background: #cfcfcf;
-}
-
-/* Forms */
 form {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 form input {
-    padding: 0.8rem;
-    margin: 0.5rem 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 form button {
-    padding: 0.8rem;
-    margin-top: 1rem;
-    border: none;
-    border-radius: 50px;
-    background: #00aaff;
-    color: #fff;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.3s;
+  padding: 12px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 6px;
+  background: #ffb400;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 form button:hover {
-    background: #0088cc;
+  background: #e09b00;
 }
 
 /* Footer */
 footer {
-    background: #1a1a1a;
-    color: #fff;
-    text-align: center;
-    padding: 1.5rem 2rem;
+  background: #222;
+  color: white;
+  text-align: center;
+  padding: 20px;
 }
 
 footer ul {
-    list-style: none;
-    display: flex;
-    justify-content: center;
-    margin-bottom: 0.5rem;
-}
-
-footer ul li {
-    margin: 0 1rem;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 0;
+  margin: 0 0 10px;
 }
 
 footer ul li a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s;
+  color: white;
+  text-decoration: none;
 }
 
 footer ul li a:hover {
-    color: #00aaff;
-}
-
-footer p {
-    font-size: 0.9rem;
-    opacity: 0.7;
+  color: #ffb400;
 }

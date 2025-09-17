@@ -74,9 +74,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 .support-form button:hover { background:#777; }
 
 /* ===== Tickets List ===== */
-.tickets-list {
-    display:flex; flex-direction:column; gap:12px; margin-bottom:30px;
-}
+.tickets-list { display:flex; flex-direction:column; gap:12px; margin-bottom:30px; }
 .ticket-item {
     background:#fff; padding:15px; border-radius:10px;
     box-shadow:0 2px 8px rgba(0,0,0,0.1);
@@ -84,12 +82,10 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     cursor:pointer; transition:0.3s;
 }
 .ticket-item:hover { background:#eee; }
-.ticket-status {
-    padding:5px 10px; border-radius:6px; font-size:0.9rem; font-weight:600;
-}
-.status-sent { background:#ffe6e6; color:#a30000; }    /* just sent */
-.status-answered { background:#e6ffe6; color:#006600; } /* answered */
-.status-seen { background:#cce5ff; color:#004085; }     /* seen */
+.ticket-status { padding:5px 10px; border-radius:6px; font-size:0.9rem; font-weight:600; }
+.status-sent { background:#ffe6e6; color:#a30000; }
+.status-answered { background:#e6ffe6; color:#006600; }
+.status-seen { background:#cce5ff; color:#004085; }
 
 /* ===== Modal ===== */
 .modal {
@@ -127,7 +123,7 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     <a href="announcements.html">📢 Announcements</a>
     <a href="profile.html">👤 Profile</a>
     <a href="settings.html">⚙️ Settings</a>
-    <a href="logout.html" style="color:#b30000;">🚪 Logout</a>
+    <a href="#" id="logoutBtn" style="color:#b30000;">🚪 Logout</a>
 </div>
 
 <!-- Overlay -->
@@ -135,8 +131,6 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
 
 <!-- Main Content -->
 <div class="main-content">
-
-  <!-- Support Form -->
   <div class="support-form">
     <h2>Contact Support</h2>
     <form id="supportForm">
@@ -150,10 +144,8 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
     </form>
   </div>
 
-  <!-- Tickets List -->
   <h2>My Tickets</h2>
   <div class="tickets-list" id="ticketsList"></div>
-
 </div>
 
 <!-- Ticket Modal -->
@@ -168,122 +160,130 @@ body { font-family:'Roboto',sans-serif; background:#f2f2f2; color:#222; margin:0
   </div>
 </div>
 
-<!-- Firebase Modular SDK -->
+<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
 import { getDatabase, ref, set, update, onValue } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
-import { firebaseConfig } from "./config.js";
+import { fetchAndDecryptConfig } from "./config.js";
 
-// Init
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getDatabase(app);
+let auth, db, encodedEmail = null;
 
-// Encode email
-function encodeEmail(email){ return email.replace(/\./g,"_"); }
+// ===== Init =====
+(async () => {
+  const firebaseConfig = await fetchAndDecryptConfig();
+  const app = initializeApp(firebaseConfig);
+  auth = getAuth(app);
+  db = getDatabase(app);
 
-let encodedEmail = null;
+  // Auth check
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      encodedEmail = user.email.replace(/\./g, "_");
+      loadTickets();
+    } else {
+      window.location.href = "login.html";
+    }
+  });
+})();
 
-// ===== Sidebar toggle =====
-window.toggleSidebar = function(){
-  document.getElementById('sidebar').classList.toggle('show');
-  document.getElementById('overlay').classList.toggle('active');
-}
-window.closeSidebar = function(){
-  document.getElementById('sidebar').classList.remove('show');
-  document.getElementById('overlay').classList.remove('active');
-}
+// ===== Sidebar =====
+window.toggleSidebar = () => {
+  document.getElementById("sidebar").classList.toggle("show");
+  document.getElementById("overlay").classList.toggle("active");
+};
+window.closeSidebar = () => {
+  document.getElementById("sidebar").classList.remove("show");
+  document.getElementById("overlay").classList.remove("active");
+};
 
-// Notifications placeholder
-window.toggleNotifications = function(){ alert("🔔 Notifications panel coming soon!"); }
+// ===== Notifications (placeholder) =====
+window.toggleNotifications = () => alert("🔔 Notifications coming soon!");
 
-// ===== Support Ticket Submit =====
-document.getElementById("supportForm").addEventListener("submit", async (e)=>{
+// ===== Logout =====
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await signOut(auth);
+  window.location.href = "login.html";
+});
+
+// ===== Submit Support Ticket =====
+document.getElementById("supportForm").addEventListener("submit", async (e) => {
   e.preventDefault();
-  const subject = document.getElementById('subject').value.trim();
-  const message = document.getElementById('message').value.trim();
+  const subject = document.getElementById("subject").value.trim();
+  const message = document.getElementById("message").value.trim();
 
-  if(!subject || !message){ alert("⚠️ Fill all fields!"); return; }
+  if (!subject || !message) return alert("⚠️ Fill all fields!");
 
-  const ticketId = "ticket_"+Date.now();
-  const ticketData = {
+  try {
+    const ticketId = "ticket_" + Date.now();
+    const ticketData = {
       subject,
       message,
-      status:"sent",   // default
-      seen:false,
-      date:new Date().toLocaleString(),
-      answer:""
-  };
+      status: "sent",
+      seen: false,
+      date: new Date().toLocaleString(),
+      answer: ""
+    };
 
-  await set(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), ticketData);
-  alert("✅ Ticket submitted successfully!");
-  document.getElementById('subject').value="";
-  document.getElementById('message').value="";
+    await set(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), ticketData);
+
+    alert("✅ Ticket submitted!");
+    document.getElementById("supportForm").reset();
+  } catch (err) {
+    console.error("❌ Ticket submit error:", err);
+    alert("Error submitting ticket.");
+  }
 });
 
 // ===== Load Tickets =====
-function loadTickets(){
+function loadTickets() {
   const ticketsRef = ref(db, `child_panel/${encodedEmail}/support`);
-  onValue(ticketsRef, snap=>{
-      const data = snap.val() || {};
-      const list = document.getElementById("ticketsList");
-      list.innerHTML="";
-      Object.entries(data).reverse().forEach(([id,val])=>{
-          const div = document.createElement("div");
-          div.className="ticket-item";
+  onValue(ticketsRef, (snap) => {
+    const data = snap.val() || {};
+    const list = document.getElementById("ticketsList");
+    list.innerHTML = "";
 
-          // Color logic
-          let statusClass="status-sent";
-          if(val.answer && val.answer.trim()!==""){
-              statusClass="status-answered";
-              if(val.seen) statusClass="status-seen";
-          }
+    Object.entries(data)
+      .sort((a, b) => b[0].localeCompare(a[0]))
+      .forEach(([id, val]) => {
+        const div = document.createElement("div");
+        div.className = "ticket-item";
 
-          div.innerHTML=`
-            <span><b>${val.subject}</b> <br><small>${val.date}</small></span>
-            <span class="ticket-status ${statusClass}">${val.status}</span>
-          `;
-          div.onclick=()=>openModal(id,val);
-          list.appendChild(div);
+        let statusClass = "status-sent";
+        if (val.answer && val.answer.trim() !== "") {
+          statusClass = val.seen ? "status-seen" : "status-answered";
+        }
+
+        div.innerHTML = `
+          <span><b>${val.subject}</b> <br><small>${val.date}</small></span>
+          <span class="ticket-status ${statusClass}">${val.status}</span>
+        `;
+        div.onclick = () => openModal(id, val);
+        list.appendChild(div);
       });
   });
 }
 
 // ===== Modal =====
-window.openModal = function(ticketId,ticket){
-  document.getElementById("modalSubject").innerText=ticket.subject;
-  document.getElementById("modalMessage").innerText=ticket.message;
-  document.getElementById("modalDate").innerText=ticket.date;
-  document.getElementById("modalStatus").innerText=ticket.status;
+window.openModal = (ticketId, ticket) => {
+  document.getElementById("modalSubject").innerText = ticket.subject;
+  document.getElementById("modalMessage").innerText = ticket.message;
+  document.getElementById("modalDate").innerText = ticket.date;
+  document.getElementById("modalStatus").innerText = ticket.status;
 
   const answerBox = document.getElementById("modalAnswer");
-  if(ticket.answer && ticket.answer.trim()!==""){
-      answerBox.innerHTML = `<b>Support Answer:</b><br>${ticket.answer}`;
+  if (ticket.answer && ticket.answer.trim() !== "") {
+    answerBox.innerHTML = `<b>Support Answer:</b><br>${ticket.answer}`;
+    update(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), { seen: true });
   } else {
-      answerBox.innerHTML = `<i>⏳ Awaiting reply from support team...</i>`;
+    answerBox.innerHTML = `<i>⏳ Awaiting reply from support...</i>`;
   }
 
-  // Mark as seen if answered
-  if(ticket.answer && ticket.answer.trim()!==""){
-      update(ref(db, `child_panel/${encodedEmail}/support/${ticketId}`), { seen:true });
-  }
-
-  document.getElementById("ticketModal").style.display="flex";
-}
-window.closeModal = function(){
-  document.getElementById("ticketModal").style.display="none";
-}
-
-// ===== Auth & Init =====
-onAuthStateChanged(auth,(user)=>{
-  if(user){
-      encodedEmail=encodeEmail(user.email);
-      loadTickets();
-  } else {
-      window.location.href="login.html";
-  }
-});
+  document.getElementById("ticketModal").style.display = "flex";
+};
+window.closeModal = () => {
+  document.getElementById("ticketModal").style.display = "none";
+};
 </script>
 </body>
 </html>

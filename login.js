@@ -17,7 +17,7 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-database.js";
 import { fetchAndDecryptConfig } from './config.js';
 
-async function main() {
+document.addEventListener("DOMContentLoaded", async () => {
     // 🔹 Fetch firebase config from backend
     const firebaseConfig = await fetchAndDecryptConfig();
 
@@ -26,12 +26,12 @@ async function main() {
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // 🔹 Set Auth Persistence (login survives refresh)
+    // 🔹 Set Auth Persistence
     await setPersistence(auth, browserLocalPersistence)
         .then(() => console.log("✅ Firebase Auth persistence set to local"))
         .catch(err => console.error("⚠️ Persistence error:", err));
 
-    // 🔹 Helper to encode email to Firebase key
+    // 🔹 Helper
     function encodeEmail(email) {
         return email.replace(/\./g, "_");
     }
@@ -59,7 +59,7 @@ async function main() {
         loginBtn.classList.remove('active');
     });
 
-    // 🔹 Check Auth State on Page Load
+    // 🔹 Auth State
     onAuthStateChanged(auth, async (user) => {
         if(user){
             const userId = encodeEmail(user.email);
@@ -90,7 +90,6 @@ async function main() {
             await createUserWithEmailAndPassword(auth, email, password);
             const userId = encodeEmail(email);
 
-            // 🔹 Base user data structure
             const now = new Date().toISOString();
             const userData = {
                 name,
@@ -119,7 +118,7 @@ async function main() {
                 notifications: {}
             };
 
-            // 🔹 Initialize dailyStats last 10 days
+            // 🔹 dailyStats last 10 days
             for(let i=0;i<10;i++){
                 const date = new Date();
                 date.setDate(date.getDate() - (10-i-1));
@@ -127,14 +126,14 @@ async function main() {
                 userData.dashboard.dailyStats[dateStr] = { impressions:0, earnings:0, cpm:0 };
             }
 
-            // 🔹 Initialize dashboard5Days for links
+            // 🔹 dashboard5Days for links
             ["link1","link2"].forEach(link => {
                 for(let i=1;i<=5;i++){
                     userData.links[link].dashboard5Days[`day${i}`] = { views:0, clicks:0 };
                 }
             });
 
-            // 🔹 Write to Realtime Database
+            // 🔹 Save user
             await set(ref(db, `child_panel/${userId}`), userData);
 
             alert("🎉 Account created successfully!");
@@ -157,7 +156,6 @@ async function main() {
             await signInWithEmailAndPassword(auth, email, password);
             const userId = encodeEmail(email);
 
-            // 🔹 Fetch user data
             const userRef = ref(db, `child_panel/${userId}`);
             const snapshot = await get(userRef);
 
@@ -177,7 +175,4 @@ async function main() {
             alert("Login failed: " + error.message);
         }
     });
-}
-
-// Run everything
-main();
+});

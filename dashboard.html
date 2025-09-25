@@ -226,12 +226,13 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   // Logout
   document.getElementById('logoutBtn').addEventListener('click',async()=>{
-    try{await signOut(auth); window.location.href="login.html";}catch(err){alert("Logout failed");}
+    try{await signOut(auth); window.location.href="login";}catch(err){alert("Logout failed");}
   });
 });
 </script>
 </body>
 </html>
+
 
 
 

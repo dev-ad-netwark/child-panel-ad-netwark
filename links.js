@@ -126,7 +126,7 @@ categoryButtons.forEach((btn) => {
 
       // Prefix by type
       const prefix = type === "movie" ? "m" : type === "adult" ? "a" : "al";
-      const url = `https://star5.com/${prefix}/${code}`;
+      const url = `https://getvideo.icu/${prefix}/${code}`;
 
       // 5-day dashboard
       const dashboard5Days = Object.fromEntries(
@@ -248,4 +248,5 @@ function renderLinks() {
     });
   });
 }
+
 

@@ -260,16 +260,24 @@ footer .links a:hover {
 </div>
 
 <div class="main">
-    <h2 id="formTitle">Login</h2>
-    <form id="authForm">
-        <input type="email" id="email" placeholder="Email Address" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <input type="submit" value="Login">
-    </form>
-    <div id="message" class="message" style="display: none;"></div>
-    <div class="toggle">
-        Don’t have an account? <a id="toggleLink">Sign Up</a>
-    </div>
+   
+  <h2 id="formTitle">Login</h2>
+<form id="authForm">
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <input type="submit" value="Login">
+</form>
+
+<div id="message" class="message" style="display: none;"></div>
+
+<div class="toggle">
+    Don’t have an account? <a id="toggleLink">Sign Up</a>
+</div>
+
+<!-- Earn Money Button (hidden until login success) -->
+<div id="earnSection" style="display:none; margin-top:15px; text-align:center;">
+    <button id="earnBtn">💰 Earn Money</button>
+</div>
 
     <h3>Direct Link Example</h3>
     <p><strong>Direct Link:</strong>
@@ -523,5 +531,35 @@ footer .links a:hover {
     }
 </script>
 
+  <script>
+document.getElementById("authForm").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    // 👉 Yaha aap backend authentication lagaoge
+    // For demo: agar koi bhi email/password diya to login success maan lete hain
+    if(email && password){
+        document.getElementById("message").style.display = "block";
+        document.getElementById("message").innerText = "✅ Login Successful!";
+        document.getElementById("message").style.color = "green";
+
+        // Show Earn Money button
+        document.getElementById("earnSection").style.display = "block";
+    } else {
+        document.getElementById("message").style.display = "block";
+        document.getElementById("message").innerText = "❌ Invalid Email or Password";
+        document.getElementById("message").style.color = "red";
+    }
+});
+
+// Redirect on Earn Money button click
+document.getElementById("earnBtn").addEventListener("click", function(){
+    window.location.href = "dashboard.html"; // 👉 Yaha apna earn money page ka naam dalna
+});
+</script>
+
 </body>
+
 </html>
